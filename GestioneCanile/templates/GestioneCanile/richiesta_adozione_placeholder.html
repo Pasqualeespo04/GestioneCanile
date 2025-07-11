@@ -1,0 +1,224 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}Richiesta di adozione per {{ cane_placeholder.nome }} - Gestione Canile{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>Richiesta di adozione</h1>
+        <h3>{{ cane_placeholder.nome }} - {{ cane_placeholder.razza }}</h3>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <img src="https://placedog.net/500/400?id={{ placeholder_id }}" class="img-fluid rounded mb-3" alt="{{ cane_placeholder.nome }}" 
+                     onerror="this.onerror=null; this.src='https://place.dog/500/400?{{ placeholder_id }}'; 
+                     this.onerror=function(){
+                         var breeds = ['retriever-golden', 'retriever-labrador', 'husky', 'beagle', 'boxer', 'bulldog', 'chihuahua', 'collie', 'dachshund', 'dalmatian', 'germanshepherd', 'poodle', 'pug', 'rottweiler', 'terrier'];
+                         var breedIndex = {{ placeholder_id }} % breeds.length;
+                         var breed = breeds[breedIndex];
+                         this.src='https://images.dog.ceo/breeds/' + breed + '/n02099601_{{ placeholder_id|stringformat:'04d' }}.jpg';
+                         this.onerror=function(){
+                             this.src='https://loremflickr.com/500/400/dog?lock={{ placeholder_id }}';
+                             this.onerror=function(){
+                                 this.parentNode.innerHTML='<div class=\'bg-secondary text-white text-center p-5\'><i class=\'fas fa-dog fa-5x\'></i><p class=\'mt-3\'>Nessuna foto disponibile</p></div>';
+                             };
+                         };
+                     }">
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Informazioni sul cane</h5>
+                        <p class="card-text">
+                            <strong>Razza:</strong> {{ cane_placeholder.razza }}<br>
+                            <strong>Età:</strong> {{ cane_placeholder.eta }} anni<br>
+                            <strong>Sesso:</strong> {{ cane_placeholder.sesso }}<br>
+                            <strong>Canile:</strong> {{ cane_placeholder.canile }}
+                        </p>
+                        {% if cane_placeholder.descrizione %}
+                        <p class="card-text">{{ cane_placeholder.descrizione }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Processo di adozione</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="timeline">
+                            <li class="timeline-item active">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <h5 class="timeline-title">1. Invio della richiesta</h5>
+                                    <p>Compila il modulo con tutte le informazioni e invialo.</p>
+                                </div>
+                            </li>
+                            <li class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <h5 class="timeline-title">2. Revisione della richiesta</h5>
+                                    <p>Il canile valuta se le condizioni dichiarate sono adatte per il cane scelto.</p>
+                                </div>
+                            </li>
+                            <li class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <h5 class="timeline-title">3. Colloquio</h5>
+                                    <p>Se la richiesta è valida, si organizza un colloquio per conoscere meglio l'adottante.</p>
+                                </div>
+                            </li>
+                            <li class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <h5 class="timeline-title">4. Visita a domicilio</h5>
+                                    <p>Un operatore potrebbe fare un sopralluogo a casa per verificare l'ambiente.</p>
+                                </div>
+                            </li>
+                            <li class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <h5 class="timeline-title">5. Finalizzazione</h5>
+                                    <p>Se tutto va bene, si completa l'adozione con la firma dei documenti e l'incontro con il cane.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Compila il modulo di richiesta</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <h5 class="mb-3">Informazioni personali</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nome" class="form-label">Nome *</label>
+                            <input type="text" class="form-control" id="nome" name="nome" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="cognome" class="form-label">Cognome *</label>
+                            <input type="text" class="form-control" id="cognome" name="cognome" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">Telefono *</label>
+                            <input type="tel" class="form-control" id="telefono" name="telefono" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="indirizzo" class="form-label">Indirizzo completo *</label>
+                        <input type="text" class="form-control" id="indirizzo" name="indirizzo" required>
+                    </div>
+
+                    <h5 class="mb-3 mt-4">Informazioni sull'abitazione</h5>
+                    <div class="mb-3">
+                        <label for="tipo_abitazione" class="form-label">Tipo di abitazione *</label>
+                        <select class="form-select" id="tipo_abitazione" name="tipo_abitazione" required>
+                            <option value="">Seleziona...</option>
+                            <option value="appartamento">Appartamento</option>
+                            <option value="casa_giardino">Casa con giardino</option>
+                            <option value="casa_rurale">Casa rurale/fattoria</option>
+                            <option value="altro">Altro</option>
+                        </select>
+                    </div>
+
+                    <h5 class="mb-3 mt-4">Esperienza con animali</h5>
+                    <div class="mb-3">
+                        <label for="esperienza_animali" class="form-label">Esperienza precedente con cani *</label>
+                        <select class="form-select" id="esperienza_animali" name="esperienza_animali" required>
+                            <option value="">Seleziona...</option>
+                            <option value="nessuna">Nessuna esperienza precedente</option>
+                            <option value="poca">Poca esperienza</option>
+                            <option value="media">Media esperienza</option>
+                            <option value="molta">Molta esperienza</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="presenza_bambini" name="presenza_bambini">
+                        <label class="form-check-label" for="presenza_bambini">Ci sono bambini in casa</label>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="presenza_altri_animali" name="presenza_altri_animali">
+                        <label class="form-check-label" for="presenza_altri_animali">Ci sono altri animali in casa</label>
+                    </div>
+
+                    <div class="mb-3" id="altri_animali_section" style="display: none;">
+                        <label for="descrizione_altri_animali" class="form-label">Descrivi gli altri animali presenti in casa</label>
+                        <textarea class="form-control" id="descrizione_altri_animali" name="descrizione_altri_animali" rows="3"></textarea>
+                    </div>
+
+                    <h5 class="mb-3 mt-4">Note aggiuntive</h5>
+                    <div class="mb-3">
+                        <label for="note" class="form-label">Altre informazioni che vuoi condividere</label>
+                        <textarea class="form-control" id="note" name="note" rows="3"></textarea>
+                    </div>
+
+                    <h5 class="mb-3 mt-4">Preferenze di contatto</h5>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="ricevi_aggiornamenti_email" name="ricevi_aggiornamenti_email">
+                        <label class="form-check-label" for="ricevi_aggiornamenti_email">Desidero ricevere aggiornamenti via email</label>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="ricevi_aggiornamenti_sms" name="ricevi_aggiornamenti_sms">
+                        <label class="form-check-label" for="ricevi_aggiornamenti_sms">Desidero ricevere aggiornamenti via SMS</label>
+                    </div>
+
+                    <div class="mb-4 form-check">
+                        <input type="checkbox" class="form-check-input" id="accetta_termini" name="accetta_termini" required>
+                        <label class="form-check-label" for="accetta_termini">
+                            Accetto i termini e le condizioni per l'adozione *
+                        </label>
+                        <div class="form-text">
+                            Dichiaro di aver letto e compreso le condizioni per l'adozione e mi impegno a rispettarle.
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <p><strong>Nota:</strong> Questo è un cane di esempio per dimostrare il funzionamento del sistema. La richiesta di adozione non verrà processata.</p>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Invia richiesta di adozione</button>
+                        <a href="{% url 'dettaglio_cane_placeholder' placeholder_id %}" class="btn btn-outline-secondary">Torna ai dettagli del cane</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const presenzaAltriAnimali = document.getElementById('presenza_altri_animali');
+        const altriAnimaliSection = document.getElementById('altri_animali_section');
+        
+        presenzaAltriAnimali.addEventListener('change', function() {
+            if (this.checked) {
+                altriAnimaliSection.style.display = 'block';
+            } else {
+                altriAnimaliSection.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

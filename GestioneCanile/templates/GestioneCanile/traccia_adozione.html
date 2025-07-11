@@ -1,0 +1,327 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}Traccia la tua richiesta di adozione - Amici a 4 Zampe{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg rounded-3 overflow-hidden">
+                    <div class="card-header bg-primary text-white p-4">
+                        <h1 class="h3 mb-0">
+                            <i class="fas fa-search me-2"></i>Traccia la tua richiesta di adozione
+                        </h1>
+                    </div>
+
+                    <div class="card-body p-4">
+                        {% if adozione %}
+                            <!-- Mostra i dettagli della richiesta -->
+                            <div class="alert alert-success mb-4">
+                                <i class="fas fa-check-circle me-2"></i>Richiesta trovata!
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-5 mb-4 mb-md-0">
+                                    <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden">
+                                        {% if adozione.cane.foto %}
+                                        <img src="{{ adozione.cane.foto.url }}" class="card-img-top" alt="{{ adozione.cane.nome }}" style="height: 200px; object-fit: cover;">
+                                        {% else %}
+                                        <div class="bg-primary bg-opacity-10 text-center p-5" style="height: 200px;">
+                                            <i class="fas fa-dog fa-5x text-primary opacity-50 mt-3"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div class="card-body text-center">
+                                            <h3 class="card-title text-primary">{{ adozione.cane.nome }}</h3>
+                                            <p class="text-muted">{{ adozione.cane.razza }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-7">
+                                    <h4 class="mb-3">Dettagli della richiesta</h4>
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <th class="ps-0" style="width: 40%"><i class="fas fa-user text-primary me-2"></i>Richiedente:</th>
+                                                <td class="fw-bold">{{ adozione.adottante_nome }} {{ adozione.adottante_cognome }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="ps-0"><i class="fas fa-calendar-alt text-primary me-2"></i>Data richiesta:</th>
+                                                <td>{{ adozione.data_richiesta }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="ps-0"><i class="fas fa-info-circle text-primary me-2"></i>Stato:</th>
+                                                <td>
+                                                    {% if adozione.status == 'richiesta' %}
+                                                        <span class="badge bg-warning text-dark px-3 py-2">{{ adozione.get_status_display }}</span>
+                                                    {% elif adozione.status == 'in_valutazione' %}
+                                                        <span class="badge bg-info text-dark px-3 py-2">{{ adozione.get_status_display }}</span>
+                                                    {% elif adozione.status == 'approvata' %}
+                                                        <span class="badge bg-success px-3 py-2">{{ adozione.get_status_display }}</span>
+                                                    {% elif adozione.status == 'completata' %}
+                                                        <span class="badge bg-primary px-3 py-2">{{ adozione.get_status_display }}</span>
+                                                    {% elif adozione.status == 'rifiutata' %}
+                                                        <span class="badge bg-danger px-3 py-2">{{ adozione.get_status_display }}</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class="ps-0"><i class="fas fa-qrcode text-primary me-2"></i>Codice:</th>
+                                                <td>
+                                                    <span class="badge bg-primary px-3 py-2">{{ adozione.codice_tracciamento }}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <!-- Stato della richiesta con timeline -->
+                                    <div class="card bg-light border-0 rounded-3 mt-4">
+                                        <div class="card-body p-3">
+                                            <h5 class="d-flex align-items-center mb-3">
+                                                <i class="fas fa-tasks text-primary me-2"></i>
+                                                Stato del processo
+                                            </h5>
+                                            <ul class="timeline mt-3">
+                                                <li class="timeline-item active">
+                                                    <div class="timeline-marker"></div>
+                                                    <div class="timeline-content">
+                                                        <h6 class="timeline-title">1. Invio della richiesta</h6>
+                                                        <p class="text-success"><i class="fas fa-check-circle me-1"></i> Completato!</p>
+                                                    </div>
+                                                </li>
+                                                <li class="timeline-item {% if adozione.status == 'in_valutazione' or adozione.status == 'approvata' or adozione.status == 'completata' %}active{% endif %}">
+                                                    <div class="timeline-marker"></div>
+                                                    <div class="timeline-content">
+                                                        <h6 class="timeline-title">2. Revisione della richiesta</h6>
+                                                        {% if adozione.status == 'in_valutazione' or adozione.status == 'approvata' or adozione.status == 'completata' %}
+                                                            <p class="text-success"><i class="fas fa-check-circle me-1"></i> Completato!</p>
+                                                        {% else %}
+                                                            <p>In attesa</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </li>
+                                                <li class="timeline-item {% if adozione.status == 'approvata' or adozione.status == 'completata' %}active{% endif %}">
+                                                    <div class="timeline-marker"></div>
+                                                    <div class="timeline-content">
+                                                        <h6 class="timeline-title">3. Approvazione</h6>
+                                                        {% if adozione.status == 'approvata' or adozione.status == 'completata' %}
+                                                            <p class="text-success"><i class="fas fa-check-circle me-1"></i> Completato!</p>
+                                                        {% else %}
+                                                            <p>In attesa</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </li>
+                                                <li class="timeline-item {% if adozione.status == 'completata' %}active{% endif %}">
+                                                    <div class="timeline-marker"></div>
+                                                    <div class="timeline-content">
+                                                        <h6 class="timeline-title">4. Adozione completata</h6>
+                                                        {% if adozione.status == 'completata' %}
+                                                            <p class="text-success"><i class="fas fa-check-circle me-1"></i> Completato!</p>
+                                                        {% else %}
+                                                            <p>In attesa</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% elif adozione_placeholder %}
+                            <!-- Mostra i dettagli della richiesta placeholder -->
+                            <div class="alert alert-success mb-4">
+                                <i class="fas fa-check-circle me-2"></i>Richiesta trovata!
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-5 mb-4 mb-md-0">
+                                    <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden">
+                                        {% if adozione_placeholder.foto_cane %}
+                                        <img src="{{ adozione_placeholder.foto_cane }}" class="card-img-top" alt="{{ adozione_placeholder.nome_cane }}" style="height: 200px; object-fit: cover;">
+                                        {% else %}
+                                        <div class="bg-primary bg-opacity-10 text-center p-5" style="height: 200px;">
+                                            <i class="fas fa-dog fa-5x text-primary opacity-50 mt-3"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div class="card-body text-center">
+                                            <h3 class="card-title text-primary">{{ adozione_placeholder.nome_cane }}</h3>
+                                            <p class="text-muted">{{ adozione_placeholder.razza_cane }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-7">
+                                    <h4 class="mb-3">Dettagli della richiesta</h4>
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <th class="ps-0" style="width: 40%"><i class="fas fa-user text-primary me-2"></i>Richiedente:</th>
+                                                <td class="fw-bold">{{ adozione_placeholder.adottante_nome }} {{ adozione_placeholder.adottante_cognome }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="ps-0"><i class="fas fa-calendar-alt text-primary me-2"></i>Data richiesta:</th>
+                                                <td>{{ adozione_placeholder.data_richiesta }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="ps-0"><i class="fas fa-info-circle text-primary me-2"></i>Stato:</th>
+                                                <td>
+                                                    {% if adozione_placeholder.status == 'richiesta' %}
+                                                        <span class="badge bg-warning text-dark px-3 py-2">Richiesta</span>
+                                                    {% elif adozione_placeholder.status == 'in_valutazione' %}
+                                                        <span class="badge bg-info text-dark px-3 py-2">In valutazione</span>
+                                                    {% elif adozione_placeholder.status == 'approvata' %}
+                                                        <span class="badge bg-success px-3 py-2">Approvata</span>
+                                                    {% elif adozione_placeholder.status == 'completata' %}
+                                                        <span class="badge bg-primary px-3 py-2">Completata</span>
+                                                    {% elif adozione_placeholder.status == 'rifiutata' %}
+                                                        <span class="badge bg-danger px-3 py-2">Rifiutata</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class="ps-0"><i class="fas fa-qrcode text-primary me-2"></i>Codice:</th>
+                                                <td>
+                                                    <span class="badge bg-primary px-3 py-2">{{ adozione_placeholder.codice_tracciamento }}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <!-- Stato della richiesta con timeline -->
+                                    <div class="card bg-light border-0 rounded-3 mt-4">
+                                        <div class="card-body p-3">
+                                            <h5 class="d-flex align-items-center mb-3">
+                                                <i class="fas fa-tasks text-primary me-2"></i>
+                                                Stato del processo
+                                            </h5>
+                                            <ul class="timeline mt-3">
+                                                <li class="timeline-item active">
+                                                    <div class="timeline-marker"></div>
+                                                    <div class="timeline-content">
+                                                        <h6 class="timeline-title">1. Invio della richiesta</h6>
+                                                        <p class="text-success"><i class="fas fa-check-circle me-1"></i> Completato!</p>
+                                                    </div>
+                                                </li>
+                                                <li class="timeline-item {% if adozione_placeholder.status == 'in_valutazione' or adozione_placeholder.status == 'approvata' or adozione_placeholder.status == 'completata' %}active{% endif %}">
+                                                    <div class="timeline-marker"></div>
+                                                    <div class="timeline-content">
+                                                        <h6 class="timeline-title">2. Revisione della richiesta</h6>
+                                                        {% if adozione_placeholder.status == 'in_valutazione' or adozione_placeholder.status == 'approvata' or adozione_placeholder.status == 'completata' %}
+                                                            <p class="text-success"><i class="fas fa-check-circle me-1"></i> Completato!</p>
+                                                        {% else %}
+                                                            <p>In attesa</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </li>
+                                                <li class="timeline-item {% if adozione_placeholder.status == 'approvata' or adozione_placeholder.status == 'completata' %}active{% endif %}">
+                                                    <div class="timeline-marker"></div>
+                                                    <div class="timeline-content">
+                                                        <h6 class="timeline-title">3. Approvazione</h6>
+                                                        {% if adozione_placeholder.status == 'approvata' or adozione_placeholder.status == 'completata' %}
+                                                            <p class="text-success"><i class="fas fa-check-circle me-1"></i> Completato!</p>
+                                                        {% else %}
+                                                            <p>In attesa</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </li>
+                                                <li class="timeline-item {% if adozione_placeholder.status == 'completata' %}active{% endif %}">
+                                                    <div class="timeline-marker"></div>
+                                                    <div class="timeline-content">
+                                                        <h6 class="timeline-title">4. Adozione completata</h6>
+                                                        {% if adozione_placeholder.status == 'completata' %}
+                                                            <p class="text-success"><i class="fas fa-check-circle me-1"></i> Completato!</p>
+                                                        {% else %}
+                                                            <p>In attesa</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% else %}
+                            <!-- Form per inserire il codice di tracciamento -->
+                            {% if messaggio_errore %}
+                                <div class="alert alert-danger mb-4">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ messaggio_errore }}
+                                </div>
+                            {% endif %}
+
+                            <p class="lead mb-4">Inserisci il codice di tracciamento che hai ricevuto per verificare lo stato della tua richiesta di adozione.</p>
+
+                            <form method="post" action="{% url 'traccia_adozione' %}">
+                                {% csrf_token %}
+                                <div class="mb-4">
+                                    <label for="codice_tracciamento" class="form-label">Codice di tracciamento</label>
+                                    <input type="text" class="form-control form-control-lg" id="codice_tracciamento" name="codice_tracciamento" placeholder="Inserisci il codice (es. ABC12345)" required>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-search me-2"></i>Verifica stato
+                                    </button>
+                                </div>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                    <div class="card-footer bg-light p-4 text-center">
+                        <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                            <a href="{% url 'home' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-home me-2"></i>Torna alla home
+                            </a>
+                            <a href="{% url 'cani_disponibili_foto' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-dog me-2"></i>Visualizza cani disponibili
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Timeline style */
+.timeline {
+    list-style: none;
+    padding: 0;
+    position: relative;
+}
+.timeline:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #ddd;
+    left: 7px;
+    margin-left: 0;
+}
+.timeline-item {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 20px;
+}
+.timeline-marker {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    background: white;
+    left: 0;
+    top: 5px;
+}
+.timeline-item.active .timeline-marker {
+    background: #0d6efd;
+    border-color: #0d6efd;
+}
+.timeline-title {
+    margin-bottom: 5px;
+}
+</style>
+{% endblock %}

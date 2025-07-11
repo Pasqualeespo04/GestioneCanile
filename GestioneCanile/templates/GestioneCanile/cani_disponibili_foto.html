@@ -1,0 +1,191 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}Adotta un cane - Gestione Canile{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ title }}</h1>
+
+<div class="row">
+    <!-- Contenuto principale: solo foto dei cani disponibili -->
+    <div class="col-12">
+        <!-- Lista cani -->
+        <div class="row">
+            {% for cane in page_obj %}
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card h-100">
+                    {% if cane.foto %}
+                    <img src="{{ cane.foto.url }}" class="card-img-top" alt="{{ cane.nome }}" style="height: 250px; object-fit: cover;">
+                    {% else %}
+                    <img src="https://placedog.net/500/280?id={{ cane.id }}" class="card-img-top" alt="{{ cane.nome }}" style="height: 250px; object-fit: cover;" 
+                         onerror="this.onerror=null; this.src='https://place.dog/300/200?{{ cane.id }}'; 
+                         this.onerror=function(){
+                             // Array di razze di cani per diversificare le immagini
+                             var breeds = ['retriever-golden', 'retriever-labrador', 'husky', 'beagle', 'boxer', 'bulldog', 'chihuahua', 'collie', 'dachshund', 'dalmatian', 'germanshepherd', 'poodle', 'pug', 'rottweiler', 'terrier'];
+                             // Seleziona una razza in base all'ID del cane
+                             var breedIndex = {{ cane.id }} % breeds.length;
+                             var breed = breeds[breedIndex];
+                             // Usa immagini di cani da diverse fonti
+                             fetch('https://dog.ceo/api/breed/' + breed + '/images/random')
+                             .then(response => response.json())
+                             .then(data => {
+                                 if (data.status === 'success') {
+                                     this.src = data.message;
+                                 } else {
+                                     throw new Error('API error');
+                                 }
+                             })
+                             .catch(error => {
+                                 // Se l'API fallisce, usa un'immagine di fallback
+                                 this.src='https://images.dog.ceo/breeds/' + breed + '/n02099601_{{ cane.id|stringformat:'04d' }}.jpg';
+                             });
+                             // Se l'immagine non può essere caricata, prova un'altra fonte
+                             this.onerror=function(){
+                                 this.src='https://loremflickr.com/500/280/dog?lock={{ cane.id }}';
+                                 this.onerror=function(){
+                                     this.parentNode.innerHTML='<div class=\'bg-secondary text-white text-center p-5\' style=\'height: 250px;\'><i class=\'fas fa-dog fa-3x\'></i><p class=\'mt-2\'>Nessuna foto disponibile</p></div>';
+                                 };
+                             };
+                         }">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ cane.nome }}</h5>
+                        <p class="card-text">
+                            <strong>Razza:</strong> {{ cane.razza }}<br>
+                            <strong>Età:</strong> {% if cane.eta %}{{ cane.eta }} anni{% else %}Età sconosciuta{% endif %}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'dettaglio_cane' cane.id %}" class="btn btn-primary">Vedi dettagli</a>
+                        <a href="{% url 'richiesta_adozione' cane.id %}" class="btn btn-success mt-2">Richiedi adozione</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <!-- Mostra cani placeholder invece del messaggio "Non ci sono cani disponibili" -->
+            {% for i in "123456"|make_list %}
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card h-100">
+                    <img src="https://placedog.net/500/280?id={{ forloop.counter }}" class="card-img-top" alt="Cane disponibile" style="height: 250px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {% if forloop.counter == 1 %}
+                                Max
+                            {% elif forloop.counter == 2 %}
+                                Luna
+                            {% elif forloop.counter == 3 %}
+                                Rocky
+                            {% elif forloop.counter == 4 %}
+                                Bella
+                            {% elif forloop.counter == 5 %}
+                                Charlie
+                            {% elif forloop.counter == 6 %}
+                                Daisy
+                            {% endif %}
+                        </h5>
+                        <p class="card-text">
+                            <strong>Razza:</strong> 
+                            {% if forloop.counter == 1 %}
+                                Labrador
+                            {% elif forloop.counter == 2 %}
+                                Pastore Tedesco
+                            {% elif forloop.counter == 3 %}
+                                Bulldog
+                            {% elif forloop.counter == 4 %}
+                                Beagle
+                            {% elif forloop.counter == 5 %}
+                                Golden Retriever
+                            {% elif forloop.counter == 6 %}
+                                Barboncino
+                            {% endif %}<br>
+                            <strong>Età:</strong> 
+                            {% if forloop.counter == 1 %}
+                                3 anni
+                            {% elif forloop.counter == 2 %}
+                                2 anni
+                            {% elif forloop.counter == 3 %}
+                                4 anni
+                            {% elif forloop.counter == 4 %}
+                                1 anno
+                            {% elif forloop.counter == 5 %}
+                                5 anni
+                            {% elif forloop.counter == 6 %}
+                                2 anni
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'dettaglio_cane_placeholder' forloop.counter %}" class="btn btn-primary">Vedi dettagli</a>
+                        <a href="{% url 'dettaglio_cane_placeholder' forloop.counter %}" class="btn btn-success mt-2">Richiedi adozione</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+
+        <!-- Paginazione -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Paginazione" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1" aria-label="Prima">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Precedente">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Prima">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Precedente">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Successiva">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Ultima">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Successiva">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Ultima">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
