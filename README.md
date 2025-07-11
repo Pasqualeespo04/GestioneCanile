@@ -1,6 +1,6 @@
-# 🐶 Sistema Informativo per la Gestione dei Canili Comunali
+# Sistema Informativo per la Gestione dei Canili Comunali
 
-## 📌 Descrizione del Progetto
+## Descrizione del Progetto
 
 Questo progetto consiste nella **progettazione e realizzazione di un sistema informativo integrato** per la gestione dei canili comunali.  
 L’obiettivo è **informatizzare e ottimizzare** tutte le attività relative:
@@ -14,7 +14,7 @@ Il sistema prevede un'applicazione web user-friendly, pensata per semplificare i
 
 ---
 
-## 🎯 Obiettivi del Progetto
+## Obiettivi del Progetto
 
 - **Coordinare le attività dei canili comunali**
 - **Migliorare la tracciabilità** e la gestione delle informazioni relative agli animali ospitati
@@ -24,7 +24,7 @@ Il sistema prevede un'applicazione web user-friendly, pensata per semplificare i
 
 ---
 
-## 🛠️ Tecnologie Utilizzate
+## Tecnologie Utilizzate
 
 - **Frontend**: HTML, CSS, JavaScript / React (a seconda del progetto)
 - **Backend**: Python / Django o Node.js
@@ -33,7 +33,7 @@ Il sistema prevede un'applicazione web user-friendly, pensata per semplificare i
 
 ---
 
-## 🚀 Avvio del Progetto
+## Avvio del Progetto
 
 > Assicurati di avere installato Git, Python/Node.js, e un database relazionale (es. PostgreSQL).
 
@@ -55,20 +55,12 @@ python manage.py runserver
 
 ---
 
-## 📄 Licenza
+## Licenza
 
 Questo progetto è distribuito sotto licenza MIT. Vedi il file `LICENSE` per maggiori dettagli.
 
 ---
 
-## 👥 Autori
+## Autori
 
 - Pasquale Esposito – [GitHub](https://github.com/tuo-username)
-- Collaboratori e contributori saranno elencati qui
-
----
-
-## 📬 Contatti
-
-Per segnalazioni o collaborazioni, contattaci all’indirizzo:  
-📧 `info@caniligestione.it` *(esempio fittizio)*
