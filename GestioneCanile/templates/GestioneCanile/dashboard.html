@@ -1,0 +1,178 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}Dashboard - Gestione Canile{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Dashboard Operatore</h1>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Cani Totali</h5>
+                <p class="card-text display-4">{{ cani_totali }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Cani Disponibili</h5>
+                <p class="card-text display-4">{{ cani_disponibili }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Adozioni in Corso</h5>
+                <p class="card-text display-4">{{ adozioni_in_corso }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Adozioni Completate</h5>
+                <p class="card-text display-4">{{ adozioni_completate }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Controlli Sanitari Imminenti</h5>
+            </div>
+            <div class="card-body">
+                {% if controlli_imminenti %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Cane</th>
+                                <th>Tipo Intervento</th>
+                                <th>Data Controllo</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for controllo in controlli_imminenti %}
+                            <tr>
+                                <td>{{ controllo.cane.nome }}</td>
+                                <td>{{ controllo.tipo_intervento }}</td>
+                                <td>{{ controllo.prossimo_controllo }}</td>
+                                <td>
+                                    <a href="{% url 'registro_sanitario' controllo.cane.id %}" class="btn btn-sm btn-outline-primary">Dettagli</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center">Non ci sono controlli sanitari imminenti.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Ultime Adozioni</h5>
+            </div>
+            <div class="card-body">
+                {% if ultime_adozioni %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Cane</th>
+                                <th>Adottante</th>
+                                <th>Data Richiesta</th>
+                                <th>Status</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for adozione in ultime_adozioni %}
+                            <tr>
+                                <td>{{ adozione.cane.nome }}</td>
+                                <td>{{ adozione.adottante_cognome }} {{ adozione.adottante_nome }}</td>
+                                <td>{{ adozione.data_richiesta }}</td>
+                                <td>
+                                    <span class="badge {% if adozione.status == 'completata' %}bg-success{% elif adozione.status == 'rifiutata' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                                        {{ adozione.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'gestione_adozioni' %}" class="btn btn-sm btn-outline-primary">Dettagli</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center">Non ci sono adozioni recenti.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Attività Recenti</h5>
+            </div>
+            <div class="card-body">
+                {% if attivita_recenti %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Cane</th>
+                                <th>Tipo Attività</th>
+                                <th>Data</th>
+                                <th>Ora</th>
+                                <th>Operatore</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attivita in attivita_recenti %}
+                            <tr>
+                                <td>{{ attivita.cane.nome }}</td>
+                                <td>{{ attivita.get_tipo_display }}</td>
+                                <td>{{ attivita.data }}</td>
+                                <td>{{ attivita.ora_inizio }}{% if attivita.ora_fine %} - {{ attivita.ora_fine }}{% endif %}</td>
+                                <td>{{ attivita.operatore.username }}</td>
+                                <td>{{ attivita.note|truncatechars:50 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center">Non ci sono attività recenti.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="d-grid gap-2 d-md-flex">
+            <a href="{% url 'gestione_cani' %}" class="btn btn-primary me-md-2">Gestione Cani</a>
+            <a href="{% url 'import_cani' %}" class="btn btn-info me-md-2">Importa Cani da CSV</a>
+            <a href="{% url 'gestione_adozioni' %}" class="btn btn-success">Gestione Adozioni</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

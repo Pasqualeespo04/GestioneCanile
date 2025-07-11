@@ -1,0 +1,105 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}{{ cane.nome }} - Gestione Canile{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        {% if cane.foto %}
+        <img src="{{ cane.foto.url }}" class="img-fluid rounded" alt="{{ cane.nome }}">
+        {% else %}
+        <div class="bg-secondary text-white text-center p-5 rounded">
+            <i class="fas fa-dog fa-5x"></i>
+            <p class="mt-3">Nessuna foto disponibile</p>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <h1>{{ cane.nome }}</h1>
+        
+        {% if cane.status == 'disponibile' %}
+        <div class="badge bg-success mb-3">Disponibile per adozione</div>
+        {% elif cane.status == 'in_adozione' %}
+        <div class="badge bg-warning text-dark mb-3">In processo di adozione</div>
+        {% elif cane.status == 'adottato' %}
+        <div class="badge bg-info mb-3">Adottato</div>
+        {% elif cane.status == 'in_cura' %}
+        <div class="badge bg-danger mb-3">In cura</div>
+        {% else %}
+        <div class="badge bg-secondary mb-3">Non adottabile</div>
+        {% endif %}
+        
+        <table class="table">
+            <tr>
+                <th>Razza:</th>
+                <td>{{ cane.razza }}</td>
+            </tr>
+            <tr>
+                <th>Età:</th>
+                <td>{% if cane.eta %}{{ cane.eta }} anni{% else %}Età sconosciuta{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Sesso:</th>
+                <td>{{ cane.get_sesso_display }}</td>
+            </tr>
+            <tr>
+                <th>Peso:</th>
+                <td>{% if cane.peso %}{{ cane.peso }} kg{% else %}Non specificato{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Microchip:</th>
+                <td>{% if cane.microchip %}{{ cane.microchip }}{% else %}Non presente{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Sterilizzato:</th>
+                <td>{% if cane.sterilizzato %}Sì{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Data di ingresso:</th>
+                <td>{{ cane.data_ingresso }}</td>
+            </tr>
+            <tr>
+                <th>Canile:</th>
+                <td>{{ cane.canile.nome }}</td>
+            </tr>
+        </table>
+        
+        {% if cane.status == 'disponibile' %}
+        <a href="{% url 'richiesta_adozione' cane.id %}" class="btn btn-primary btn-lg mt-3">Richiedi adozione</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <h2>Descrizione</h2>
+        <div class="card">
+            <div class="card-body">
+                {% if cane.descrizione %}
+                <p>{{ cane.descrizione|linebreaks }}</p>
+                {% else %}
+                <p>Nessuna descrizione disponibile per questo cane.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if user.is_authenticated %}
+<div class="row mt-5">
+    <div class="col-12">
+        <h2>Informazioni per operatori</h2>
+        <div class="card">
+            <div class="card-body">
+                <p><strong>Status attuale:</strong> {{ cane.get_status_display }}</p>
+                
+                <div class="mt-3">
+                    <a href="{% url 'registro_sanitario' cane.id %}" class="btn btn-outline-primary">Visualizza registro sanitario</a>
+                    <a href="{% url 'gestione_cani' %}" class="btn btn-outline-secondary">Torna alla gestione cani</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

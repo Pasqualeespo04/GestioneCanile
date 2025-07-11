@@ -1,0 +1,162 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}Registro Sanitario: {{ cane.nome }} - Gestione Canile{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Registro Sanitario: {{ cane.nome }}</h1>
+    <a href="{% url 'dettaglio_cane' cane.id %}" class="btn btn-outline-primary">Torna al profilo del cane</a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Informazioni sul cane</h5>
+            </div>
+            <div class="card-body">
+                {% if cane.foto %}
+                <img src="{{ cane.foto.url }}" class="img-fluid rounded mb-3" alt="{{ cane.nome }}">
+                {% endif %}
+                
+                <table class="table table-sm">
+                    <tr>
+                        <th>Nome:</th>
+                        <td>{{ cane.nome }}</td>
+                    </tr>
+                    <tr>
+                        <th>Razza:</th>
+                        <td>{{ cane.razza }}</td>
+                    </tr>
+                    <tr>
+                        <th>Età:</th>
+                        <td>{% if cane.eta %}{{ cane.eta }} anni{% else %}Età sconosciuta{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <th>Sesso:</th>
+                        <td>{{ cane.get_sesso_display }}</td>
+                    </tr>
+                    <tr>
+                        <th>Peso:</th>
+                        <td>{% if cane.peso %}{{ cane.peso }} kg{% else %}Non specificato{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <th>Microchip:</th>
+                        <td>{% if cane.microchip %}{{ cane.microchip }}{% else %}Non presente{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <th>Sterilizzato:</th>
+                        <td>{% if cane.sterilizzato %}Sì{% else %}No{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <th>Status:</th>
+                        <td>
+                            <span class="badge {% if cane.status == 'disponibile' %}bg-success{% elif cane.status == 'in_adozione' %}bg-warning text-dark{% elif cane.status == 'adottato' %}bg-info{% elif cane.status == 'in_cura' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                {{ cane.get_status_display }}
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Aggiungi nuovo intervento sanitario</h5>
+                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseForm">
+                    <i class="fas fa-plus"></i> Nuovo
+                </button>
+            </div>
+            <div class="collapse" id="collapseForm">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="tipo_intervento" class="form-label">Tipo di intervento *</label>
+                                <input type="text" class="form-control" id="tipo_intervento" name="tipo_intervento" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="data" class="form-label">Data *</label>
+                                <input type="date" class="form-control" id="data" name="data" value="{{ today|date:'Y-m-d' }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="veterinario" class="form-label">Veterinario *</label>
+                            <input type="text" class="form-control" id="veterinario" name="veterinario" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="descrizione" class="form-label">Descrizione *</label>
+                            <textarea class="form-control" id="descrizione" name="descrizione" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="farmaci_prescritti" class="form-label">Farmaci prescritti</label>
+                            <textarea class="form-control" id="farmaci_prescritti" name="farmaci_prescritti" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="prossimo_controllo" class="form-label">Data prossimo controllo</label>
+                            <input type="date" class="form-control" id="prossimo_controllo" name="prossimo_controllo">
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Salva intervento</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Storico interventi sanitari</h5>
+            </div>
+            <div class="card-body">
+                {% if registri %}
+                <div class="accordion" id="accordionRegistri">
+                    {% for registro in registri %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ registro.id }}">
+                            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ registro.id }}">
+                                <strong>{{ registro.data|date:"d/m/Y" }} - {{ registro.tipo_intervento }}</strong>
+                                {% if registro.prossimo_controllo %}
+                                <span class="badge bg-warning text-dark ms-2">Prossimo controllo: {{ registro.prossimo_controllo|date:"d/m/Y" }}</span>
+                                {% endif %}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ registro.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#accordionRegistri">
+                            <div class="accordion-body">
+                                <p><strong>Veterinario:</strong> {{ registro.veterinario }}</p>
+                                <p><strong>Descrizione:</strong><br>{{ registro.descrizione|linebreaks }}</p>
+                                
+                                {% if registro.farmaci_prescritti %}
+                                <p><strong>Farmaci prescritti:</strong><br>{{ registro.farmaci_prescritti|linebreaks }}</p>
+                                {% endif %}
+                                
+                                <div class="d-flex justify-content-end mt-3">
+                                    <button class="btn btn-sm btn-outline-primary me-2">Modifica</button>
+                                    <button class="btn btn-sm btn-outline-danger">Elimina</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-center">Non ci sono interventi sanitari registrati per questo cane.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between">
+    <a href="{% url 'gestione_cani' %}" class="btn btn-outline-secondary">Torna alla lista cani</a>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">Torna alla dashboard</a>
+</div>
+{% endblock %}

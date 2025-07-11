@@ -1,0 +1,76 @@
+{% extends 'GestioneCanile/base.html' %}
+{% load static %}
+
+{% block title %}Importa Cani - Gestione Canile{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Importa Cani da CSV</h1>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Carica il file CSV</h5>
+    </div>
+    <div class="card-body">
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="csv_file" class="form-label">File CSV</label>
+                <input type="file" class="form-control" id="csv_file" name="csv_file" required>
+                <div class="form-text">Il file deve essere in formato CSV con separatore virgola (,).</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Importa Cani</button>
+        </form>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0">Formato del file CSV</h5>
+    </div>
+    <div class="card-body">
+        <p>Il file CSV deve contenere le seguenti colonne nell'ordine indicato:</p>
+        <ol>
+            <li><strong>Nome</strong> - Nome del cane</li>
+            <li><strong>Razza</strong> - Razza del cane</li>
+            <li><strong>Data di nascita</strong> - Formato YYYY-MM-DD (può essere vuoto)</li>
+            <li><strong>Sesso</strong> - M o F</li>
+            <li><strong>Peso</strong> - Peso in kg (può essere vuoto)</li>
+            <li><strong>Microchip</strong> - Numero microchip (può essere vuoto)</li>
+            <li><strong>Sterilizzato</strong> - Si/No, Yes/No, True/False, 1/0</li>
+            <li><strong>ID Canile</strong> - ID numerico del canile</li>
+        </ol>
+        <p>La prima riga del file deve contenere le intestazioni delle colonne.</p>
+        <p>Esempio:</p>
+        <pre>Nome,Razza,Data di nascita,Sesso,Peso,Microchip,Sterilizzato,ID Canile
+Rex,Pastore Tedesco,2020-05-15,M,30.5,123456789012345,Si,1
+Luna,Labrador,2019-10-20,F,25.2,987654321098765,No,2</pre>
+
+        <div class="mt-3 mb-3">
+            <a href="{% static 'GestioneCanile/sample_dogs.csv' %}" class="btn btn-outline-primary" download>
+                <i class="fas fa-download"></i> Scarica file CSV di esempio
+            </a>
+        </div>
+
+        <h6 class="mt-4">Canili disponibili:</h6>
+        <ul>
+            {% for canile in canili %}
+            <li><strong>ID {{ canile.id }}</strong>: {{ canile.nome }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'gestione_cani' %}" class="btn btn-outline-secondary">Torna alla Gestione Cani</a>
+</div>
+{% endblock %}

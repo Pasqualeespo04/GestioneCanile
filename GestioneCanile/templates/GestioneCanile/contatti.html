@@ -1,0 +1,135 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}Contatti - Gestione Canile{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Contatti</h1>
+        
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="card-title">Informazioni generali</h2>
+                        <p class="card-text">
+                            Per informazioni generali sui nostri canili, sulle adozioni o su come puoi aiutarci, 
+                            puoi contattarci tramite:
+                        </p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-envelope me-2"></i> Email: info@gestionecanile.it</li>
+                            <li><i class="fas fa-phone me-2"></i> Telefono: +39 123 456 7890</li>
+                            <li><i class="fas fa-clock me-2"></i> Orari: Lun-Ven 9:00-18:00, Sab-Dom 10:00-16:00</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="card-title">Emergenze</h2>
+                        <p class="card-text">
+                            Per segnalare un cane abbandonato o in difficoltà, o per altre emergenze, 
+                            contattaci immediatamente al:
+                        </p>
+                        <p class="display-6 text-danger">+39 123 456 7899</p>
+                        <p class="card-text">
+                            Questo numero è attivo 24 ore su 24, 7 giorni su 7.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="mb-4">I nostri canili</h2>
+        
+        <div class="row">
+            {% for canile in canili %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0">{{ canile.nome }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            <strong>Indirizzo:</strong><br>
+                            {{ canile.indirizzo }}<br>
+                            {{ canile.citta }}<br><br>
+                            <strong>Contatti:</strong><br>
+                            Telefono: {{ canile.telefono }}<br>
+                            Email: {{ canile.email }}
+                        </p>
+                        <p class="card-text">
+                            <strong>Orari di visita:</strong><br>
+                            Lun-Ven: 14:00-18:00<br>
+                            Sab-Dom: 10:00-16:00
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://maps.google.com/?q={{ canile.indirizzo }},{{ canile.citta }}" target="_blank" class="btn btn-outline-primary">Visualizza sulla mappa</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>Non ci sono canili registrati al momento.</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="card mt-5">
+            <div class="card-body">
+                <h2 class="card-title">Scrivici</h2>
+                <p class="card-text">
+                    Compila il modulo sottostante per inviarci un messaggio. Ti risponderemo al più presto.
+                </p>
+                
+                <form>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="nome" class="form-label">Nome *</label>
+                            <input type="text" class="form-control" id="nome" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="cognome" class="form-label">Cognome *</label>
+                            <input type="text" class="form-control" id="cognome" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="telefono" class="form-label">Telefono</label>
+                            <input type="tel" class="form-control" id="telefono">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="oggetto" class="form-label">Oggetto *</label>
+                        <input type="text" class="form-control" id="oggetto" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="messaggio" class="form-label">Messaggio *</label>
+                        <textarea class="form-control" id="messaggio" rows="5" required></textarea>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="privacy" required>
+                        <label class="form-check-label" for="privacy">
+                            Acconsento al trattamento dei miei dati personali ai sensi del GDPR *
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Invia messaggio</button>
+                </form>
+                
+                <p class="text-muted mt-3"><small>* Campi obbligatori</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

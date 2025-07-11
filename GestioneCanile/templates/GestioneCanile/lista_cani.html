@@ -1,0 +1,200 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}Adotta un cane - Gestione Canile{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Cani disponibili per l'adozione</h1>
+
+<!-- Filtri e ricerca -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label for="q" class="form-label">Cerca</label>
+                <input type="text" class="form-control" id="q" name="q" value="{{ query }}" placeholder="Nome, razza o descrizione...">
+            </div>
+            <div class="col-md-4">
+                <label for="cane" class="form-label">Cane</label>
+                <select class="form-select" id="cane" name="cane">
+                    <option value="">Tutti i cani</option>
+                    {% for cane in cani_disponibili %}
+                    <option value="{{ cane.id }}" {% if cane.id|stringformat:"i" == cane_id %}selected{% endif %}>{{ cane.nome }} - {{ cane.razza }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="canile" class="form-label">Canile</label>
+                <select class="form-select" id="canile" name="canile">
+                    <option value="">Tutti i canili</option>
+                    {% for canile in canili %}
+                    <option value="{{ canile.id }}" {% if canile.id|stringformat:"i" == canile_id %}selected{% endif %}>{{ canile.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Filtri aggiuntivi -->
+            <div class="col-md-3">
+                <label for="taglia" class="form-label">Taglia</label>
+                <select class="form-select" id="taglia" name="taglia">
+                    <option value="">Tutte le taglie</option>
+                    <option value="piccola" {% if taglia == 'piccola' %}selected{% endif %}>Piccola</option>
+                    <option value="media" {% if taglia == 'media' %}selected{% endif %}>Media</option>
+                    <option value="grande" {% if taglia == 'grande' %}selected{% endif %}>Grande</option>
+                    <option value="molto_grande" {% if taglia == 'molto_grande' %}selected{% endif %}>Molto grande</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="sesso" class="form-label">Sesso</label>
+                <select class="form-select" id="sesso" name="sesso">
+                    <option value="">Tutti</option>
+                    <option value="M" {% if sesso == 'M' %}selected{% endif %}>Maschio</option>
+                    <option value="F" {% if sesso == 'F' %}selected{% endif %}>Femmina</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Età (anni)</label>
+                <div class="row">
+                    <div class="col-6">
+                        <input type="number" class="form-control" id="eta_min" name="eta_min" value="{{ eta_min }}" placeholder="Min" min="0" max="20">
+                    </div>
+                    <div class="col-6">
+                        <input type="number" class="form-control" id="eta_max" name="eta_max" value="{{ eta_max }}" placeholder="Max" min="0" max="20">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Esigenze particolari</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="compatibile_bambini" name="compatibile_bambini" value="true" {% if compatibile_bambini %}checked{% endif %}>
+                    <label class="form-check-label" for="compatibile_bambini">
+                        Compatibile con bambini
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="compatibile_animali" name="compatibile_animali" value="true" {% if compatibile_animali %}checked{% endif %}>
+                    <label class="form-check-label" for="compatibile_animali">
+                        Compatibile con altri animali
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-12 mt-3">
+                <button type="submit" class="btn btn-primary">Filtra</button>
+                <a href="{% url 'lista_cani' %}" class="btn btn-outline-secondary">Reimposta filtri</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Ordinamento -->
+<div class="mb-3">
+    <div class="btn-group">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+            Ordina per
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item {% if sort_by == '-data_ingresso' %}active{% endif %}" href="?q={{ query }}&cane={{ cane_id }}&canile={{ canile_id }}&taglia={{ taglia }}&sesso={{ sesso }}&eta_min={{ eta_min }}&eta_max={{ eta_max }}{% if compatibile_bambini %}&compatibile_bambini={{ compatibile_bambini }}{% endif %}{% if compatibile_animali %}&compatibile_animali={{ compatibile_animali }}{% endif %}&sort=-data_ingresso">Più recenti</a></li>
+            <li><a class="dropdown-item {% if sort_by == 'data_ingresso' %}active{% endif %}" href="?q={{ query }}&cane={{ cane_id }}&canile={{ canile_id }}&taglia={{ taglia }}&sesso={{ sesso }}&eta_min={{ eta_min }}&eta_max={{ eta_max }}{% if compatibile_bambini %}&compatibile_bambini={{ compatibile_bambini }}{% endif %}{% if compatibile_animali %}&compatibile_animali={{ compatibile_animali }}{% endif %}&sort=data_ingresso">Più vecchi</a></li>
+            <li><a class="dropdown-item {% if sort_by == 'nome' %}active{% endif %}" href="?q={{ query }}&cane={{ cane_id }}&canile={{ canile_id }}&taglia={{ taglia }}&sesso={{ sesso }}&eta_min={{ eta_min }}&eta_max={{ eta_max }}{% if compatibile_bambini %}&compatibile_bambini={{ compatibile_bambini }}{% endif %}{% if compatibile_animali %}&compatibile_animali={{ compatibile_animali }}{% endif %}&sort=nome">Nome (A-Z)</a></li>
+            <li><a class="dropdown-item {% if sort_by == '-nome' %}active{% endif %}" href="?q={{ query }}&cane={{ cane_id }}&canile={{ canile_id }}&taglia={{ taglia }}&sesso={{ sesso }}&eta_min={{ eta_min }}&eta_max={{ eta_max }}{% if compatibile_bambini %}&compatibile_bambini={{ compatibile_bambini }}{% endif %}{% if compatibile_animali %}&compatibile_animali={{ compatibile_animali }}{% endif %}&sort=-nome">Nome (Z-A)</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- Lista cani -->
+<div class="row">
+    {% for cane in page_obj %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            {% if cane.foto %}
+            <img src="{{ cane.foto.url }}" class="card-img-top" alt="{{ cane.nome }}">
+            {% else %}
+            <div class="bg-secondary text-white text-center p-5">
+                <i class="fas fa-dog fa-3x"></i>
+                <p class="mt-2">Nessuna foto disponibile</p>
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ cane.nome }}</h5>
+                <p class="card-text">
+                    <strong>Razza:</strong> {{ cane.razza }}<br>
+                    <strong>Età:</strong> {% if cane.eta %}{{ cane.eta }} anni{% else %}Età sconosciuta{% endif %}<br>
+                    <strong>Sesso:</strong> {{ cane.get_sesso_display }}<br>
+                    <strong>Taglia:</strong> {% if cane.taglia %}{{ cane.get_taglia_display }}{% else %}Non specificata{% endif %}<br>
+                    <strong>Canile:</strong> {{ cane.canile.nome }}
+                </p>
+                <p class="card-text">{{ cane.descrizione|truncatewords:15 }}</p>
+                <div class="d-flex flex-wrap gap-1 mb-2">
+                    {% if cane.compatibile_bambini %}
+                    <span class="badge bg-success">Compatibile con bambini</span>
+                    {% endif %}
+                    {% if cane.compatibile_animali %}
+                    <span class="badge bg-success">Compatibile con altri animali</span>
+                    {% endif %}
+                    <span class="badge bg-primary">{{ cane.get_status_display }}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'dettaglio_cane' cane.id %}" class="btn btn-primary">Vedi dettagli</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center">
+        <p>Non ci sono cani disponibili per l'adozione con i criteri selezionati.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Paginazione -->
+{% if page_obj.has_other_pages %}
+<nav aria-label="Paginazione">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?q={{ query }}&cane={{ cane_id }}&canile={{ canile_id }}&taglia={{ taglia }}&sesso={{ sesso }}&eta_min={{ eta_min }}&eta_max={{ eta_max }}{% if compatibile_bambini %}&compatibile_bambini={{ compatibile_bambini }}{% endif %}{% if compatibile_animali %}&compatibile_animali={{ compatibile_animali }}{% endif %}&sort={{ sort_by }}&page=1">&laquo; Prima</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?q={{ query }}&cane={{ cane_id }}&canile={{ canile_id }}&taglia={{ taglia }}&sesso={{ sesso }}&eta_min={{ eta_min }}&eta_max={{ eta_max }}{% if compatibile_bambini %}&compatibile_bambini={{ compatibile_bambini }}{% endif %}{% if compatibile_animali %}&compatibile_animali={{ compatibile_animali }}{% endif %}&sort={{ sort_by }}&page={{ page_obj.previous_page_number }}">Precedente</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&laquo; Prima</span>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link">Precedente</span>
+        </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active">
+            <span class="page-link">{{ num }}</span>
+        </li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <li class="page-item">
+            <a class="page-link" href="?q={{ query }}&cane={{ cane_id }}&canile={{ canile_id }}&taglia={{ taglia }}&sesso={{ sesso }}&eta_min={{ eta_min }}&eta_max={{ eta_max }}{% if compatibile_bambini %}&compatibile_bambini={{ compatibile_bambini }}{% endif %}{% if compatibile_animali %}&compatibile_animali={{ compatibile_animali }}{% endif %}&sort={{ sort_by }}&page={{ num }}">{{ num }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?q={{ query }}&cane={{ cane_id }}&canile={{ canile_id }}&taglia={{ taglia }}&sesso={{ sesso }}&eta_min={{ eta_min }}&eta_max={{ eta_max }}{% if compatibile_bambini %}&compatibile_bambini={{ compatibile_bambini }}{% endif %}{% if compatibile_animali %}&compatibile_animali={{ compatibile_animali }}{% endif %}&sort={{ sort_by }}&page={{ page_obj.next_page_number }}">Successiva</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?q={{ query }}&cane={{ cane_id }}&canile={{ canile_id }}&taglia={{ taglia }}&sesso={{ sesso }}&eta_min={{ eta_min }}&eta_max={{ eta_max }}{% if compatibile_bambini %}&compatibile_bambini={{ compatibile_bambini }}{% endif %}{% if compatibile_animali %}&compatibile_animali={{ compatibile_animali }}{% endif %}&sort={{ sort_by }}&page={{ page_obj.paginator.num_pages }}">Ultima &raquo;</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">Successiva</span>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link">Ultima &raquo;</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

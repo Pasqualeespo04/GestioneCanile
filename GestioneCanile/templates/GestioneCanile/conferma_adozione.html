@@ -1,0 +1,62 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}Richiesta di adozione inviata - Gestione Canile{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-success mb-4">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">Richiesta di adozione inviata con successo!</h3>
+            </div>
+            <div class="card-body">
+                <h4>Grazie per la tua richiesta di adozione per {{ adozione.cane.nome }}!</h4>
+                
+                <p class="lead mt-4">Ecco i dettagli della tua richiesta:</p>
+                
+                <table class="table mt-3">
+                    <tr>
+                        <th style="width: 30%">Cane:</th>
+                        <td>{{ adozione.cane.nome }} ({{ adozione.cane.razza }})</td>
+                    </tr>
+                    <tr>
+                        <th>Richiedente:</th>
+                        <td>{{ adozione.adottante_nome }} {{ adozione.adottante_cognome }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td>{{ adozione.adottante_email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Telefono:</th>
+                        <td>{{ adozione.adottante_telefono }}</td>
+                    </tr>
+                    <tr>
+                        <th>Data richiesta:</th>
+                        <td>{{ adozione.data_richiesta }}</td>
+                    </tr>
+                    <tr>
+                        <th>Stato:</th>
+                        <td>
+                            <span class="badge bg-warning text-dark">{{ adozione.get_status_display }}</span>
+                        </td>
+                    </tr>
+                </table>
+                
+                <div class="alert alert-info mt-4">
+                    <h5 class="alert-heading">Cosa succede ora?</h5>
+                    <p>Il nostro staff esaminerà la tua richiesta e ti contatterà al più presto per fissare un appuntamento. Ti preghiamo di tenere il telefono a portata di mano e di controllare regolarmente la tua email.</p>
+                    <hr>
+                    <p class="mb-0">Per qualsiasi domanda, non esitare a contattarci al numero {{ adozione.cane.canile.telefono }} o via email a {{ adozione.cane.canile.email }}.</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{% url 'home' %}" class="btn btn-primary me-md-2">Torna alla home</a>
+                    <a href="{% url 'lista_cani' %}" class="btn btn-outline-secondary">Visualizza altri cani</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

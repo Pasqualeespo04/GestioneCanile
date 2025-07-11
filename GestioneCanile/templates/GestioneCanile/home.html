@@ -1,0 +1,200 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}Home - Sistema Gestione Canili{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="jumbotron bg-light p-5 rounded">
+    <h1 class="display-4">Sistema Gestione Canili</h1>
+    <p class="lead">Digitalizzazione e gestione efficiente delle attività di accoglienza, monitoraggio sanitario e adozione dei cani randagi o abbandonati.</p>
+    <hr class="my-4">
+    <p>Abbiamo attualmente {{ total_cani_disponibili }} cani in attesa di una nuova famiglia.</p>
+    <a class="btn btn-primary btn-lg" href="{% url 'lista_cani' %}" role="button">Vedi i cani disponibili</a>
+</div>
+
+<!-- Statistiche -->
+<div class="row mt-5 text-center">
+    <div class="col-12">
+        <h2 class="mb-4">Il nostro impatto</h2>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title text-primary">{{ total_cani }}</h3>
+                <p class="card-text">Cani aiutati</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title text-success">{{ adozioni_completate }}</h3>
+                <p class="card-text">Adozioni completate</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title text-info">{{ adozioni_in_corso }}</h3>
+                <p class="card-text">Adozioni in corso</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Processo di adozione -->
+<div class="row mt-5 bg-light py-5">
+    <div class="col-12 text-center">
+        <h2 class="mb-4">Come funziona l'adozione</h2>
+        <p class="lead mb-5">Seguire questi semplici passaggi per adottare un cane dal nostro sistema</p>
+    </div>
+
+    <div class="col-md-3 text-center mb-4">
+        <div class="bg-white rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+            <h3 class="m-0">1</h3>
+        </div>
+        <h5 class="mt-3">Trova un cane</h5>
+        <p>Sfoglia tra quelli disponibili nel nostro database</p>
+    </div>
+
+    <div class="col-md-3 text-center mb-4">
+        <div class="bg-white rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+            <h3 class="m-0">2</h3>
+        </div>
+        <h5 class="mt-3">Invia una richiesta</h5>
+        <p>Compila il modulo online con i tuoi dati</p>
+    </div>
+
+    <div class="col-md-3 text-center mb-4">
+        <div class="bg-white rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+            <h3 class="m-0">3</h3>
+        </div>
+        <h5 class="mt-3">Colloquio e visita</h5>
+        <p>Partecipa a un colloquio e a una visita a casa</p>
+    </div>
+
+    <div class="col-md-3 text-center mb-4">
+        <div class="bg-white rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+            <h3 class="m-0">4</h3>
+        </div>
+        <h5 class="mt-3">Completa l'adozione</h5>
+        <p>Accogli il cane nella tua vita</p>
+    </div>
+
+    <div class="col-12 text-center mt-4">
+        <a href="{% url 'gestione_adozioni' %}" class="btn btn-primary">Traccia la tua richiesta di adozione</a>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">I nostri cani in cerca di casa</h2>
+    </div>
+</div>
+
+<div class="row">
+    {% for cane in cani_disponibili %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            {% if cane.foto %}
+            <img src="{{ cane.foto.url }}" class="card-img-top" alt="{{ cane.nome }}">
+            {% else %}
+            <div class="bg-secondary text-white text-center p-5">
+                <i class="fas fa-dog fa-3x"></i>
+                <p class="mt-2">Nessuna foto disponibile</p>
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ cane.nome }}</h5>
+                <p class="card-text">
+                    <strong>Razza:</strong> {{ cane.razza }}<br>
+                    <strong>Età:</strong> {% if cane.eta %}{{ cane.eta }} anni{% else %}Età sconosciuta{% endif %}<br>
+                    <strong>Sesso:</strong> {{ cane.get_sesso_display }}
+                </p>
+                <p class="card-text">{{ cane.descrizione|truncatewords:20 }}</p>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'dettaglio_cane' cane.id %}" class="btn btn-primary">Scopri di più</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center">
+        <p>Non ci sono cani disponibili per l'adozione al momento.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row mt-5">
+    <div class="col-12 text-center">
+        <a href="{% url 'lista_cani' %}" class="btn btn-outline-primary">Vedi tutti i cani disponibili</a>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">I nostri canili</h2>
+    </div>
+</div>
+
+<div class="row">
+    {% for canile in canili %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ canile.nome }}</h5>
+                <p class="card-text">
+                    <strong>Indirizzo:</strong> {{ canile.indirizzo }}, {{ canile.citta }}<br>
+                    <strong>Telefono:</strong> {{ canile.telefono }}<br>
+                    <strong>Email:</strong> {{ canile.email }}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center">
+        <p>Non ci sono canili registrati al momento.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Contatti e Link Utili -->
+<div class="row mt-5 bg-light py-5">
+    <div class="col-12 text-center mb-4">
+        <h2>Contatti e Link Utili</h2>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 bg-transparent">
+            <div class="card-body">
+                <h5 class="card-title">Contattaci</h5>
+                <p class="card-text">
+                    <strong>Email:</strong> info@gestionecanile.it<br>
+                    <strong>Telefono:</strong> +39 123 456 7890<br>
+                    <strong>Indirizzo:</strong> Via dei Canili 123, 00100 Roma
+                </p>
+                <p class="card-text">
+                    Siamo disponibili dal lunedì al venerdì dalle 9:00 alle 18:00<br>
+                    Sabato e domenica dalle 10:00 alle 16:00
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 bg-transparent">
+            <div class="card-body">
+                <h5 class="card-title">Link Utili</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="{% url 'home' %}" class="text-decoration-none">Homepage</a></li>
+                    <li class="mb-2"><a href="{% url 'lista_cani' %}" class="text-decoration-none">Elenco cani disponibili</a></li>
+                    <li class="mb-2"><a href="{% url 'gestione_adozioni' %}" class="text-decoration-none">Tracciamento adozioni</a></li>
+                    <li class="mb-2"><a href="{% url 'chi_siamo' %}" class="text-decoration-none">Chi siamo</a></li>
+                    <li class="mb-2"><a href="{% url 'contatti' %}" class="text-decoration-none">Contatti</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

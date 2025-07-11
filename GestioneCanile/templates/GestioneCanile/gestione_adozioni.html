@@ -1,0 +1,169 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}Gestione Adozioni - Gestione Canile{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Gestione Adozioni</h1>
+
+<!-- Filtri e ricerca -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
+                <label for="q" class="form-label">Cerca</label>
+                <input type="text" class="form-control" id="q" name="q" value="{{ query }}" placeholder="Nome cane, cognome adottante, email...">
+            </div>
+            <div class="col-md-4">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">Tutti gli status</option>
+                    <option value="richiesta" {% if status == 'richiesta' %}selected{% endif %}>Richiesta</option>
+                    <option value="in_valutazione" {% if status == 'in_valutazione' %}selected{% endif %}>In valutazione</option>
+                    <option value="approvata" {% if status == 'approvata' %}selected{% endif %}>Approvata</option>
+                    <option value="completata" {% if status == 'completata' %}selected{% endif %}>Completata</option>
+                    <option value="rifiutata" {% if status == 'rifiutata' %}selected{% endif %}>Rifiutata</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Filtra</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Ordinamento -->
+<div class="mb-3">
+    <div class="btn-group">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+            Ordina per
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item {% if sort_by == '-data_richiesta' %}active{% endif %}" href="?q={{ query }}&status={{ status }}&sort=-data_richiesta">Più recenti</a></li>
+            <li><a class="dropdown-item {% if sort_by == 'data_richiesta' %}active{% endif %}" href="?q={{ query }}&status={{ status }}&sort=data_richiesta">Più vecchie</a></li>
+            <li><a class="dropdown-item {% if sort_by == 'adottante_cognome' %}active{% endif %}" href="?q={{ query }}&status={{ status }}&sort=adottante_cognome">Cognome adottante (A-Z)</a></li>
+            <li><a class="dropdown-item {% if sort_by == '-adottante_cognome' %}active{% endif %}" href="?q={{ query }}&status={{ status }}&sort=-adottante_cognome">Cognome adottante (Z-A)</a></li>
+            <li><a class="dropdown-item {% if sort_by == 'status' %}active{% endif %}" href="?q={{ query }}&status={{ status }}&sort=status">Status</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- Lista adozioni -->
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Cane</th>
+                <th>Adottante</th>
+                <th>Contatti</th>
+                <th>Data Richiesta</th>
+                <th>Data Adozione</th>
+                <th>Status</th>
+                <th>Operatore</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for adozione in page_obj %}
+            <tr>
+                <td>{{ adozione.id }}</td>
+                <td>
+                    <a href="{% url 'dettaglio_cane' adozione.cane.id %}">{{ adozione.cane.nome }}</a>
+                    <small class="d-block text-muted">{{ adozione.cane.razza }}</small>
+                </td>
+                <td>{{ adozione.adottante_cognome }} {{ adozione.adottante_nome }}</td>
+                <td>
+                    <small>{{ adozione.adottante_email }}</small><br>
+                    <small>{{ adozione.adottante_telefono }}</small>
+                </td>
+                <td>{{ adozione.data_richiesta }}</td>
+                <td>{% if adozione.data_adozione %}{{ adozione.data_adozione }}{% else %}-{% endif %}</td>
+                <td>
+                    <span class="badge {% if adozione.status == 'completata' %}bg-success{% elif adozione.status == 'rifiutata' %}bg-danger{% elif adozione.status == 'approvata' %}bg-info{% elif adozione.status == 'in_valutazione' %}bg-primary{% else %}bg-warning text-dark{% endif %}">
+                        {{ adozione.get_status_display }}
+                    </span>
+                </td>
+                <td>{% if adozione.operatore %}{{ adozione.operatore.username }}{% else %}-{% endif %}</td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                            Azioni
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Visualizza dettagli</a></li>
+                            <li><a class="dropdown-item" href="#">Assegna a me</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Cambia status a "In valutazione"</a></li>
+                            <li><a class="dropdown-item" href="#">Cambia status a "Approvata"</a></li>
+                            <li><a class="dropdown-item" href="#">Cambia status a "Completata"</a></li>
+                            <li><a class="dropdown-item" href="#">Cambia status a "Rifiutata"</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#">Elimina</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" class="text-center">Non ci sono adozioni con i criteri selezionati.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Paginazione -->
+{% if page_obj.has_other_pages %}
+<nav aria-label="Paginazione">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?q={{ query }}&status={{ status }}&sort={{ sort_by }}&page=1">&laquo; Prima</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?q={{ query }}&status={{ status }}&sort={{ sort_by }}&page={{ page_obj.previous_page_number }}">Precedente</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&laquo; Prima</span>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link">Precedente</span>
+        </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active">
+            <span class="page-link">{{ num }}</span>
+        </li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <li class="page-item">
+            <a class="page-link" href="?q={{ query }}&status={{ status }}&sort={{ sort_by }}&page={{ num }}">{{ num }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?q={{ query }}&status={{ status }}&sort={{ sort_by }}&page={{ page_obj.next_page_number }}">Successiva</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?q={{ query }}&status={{ status }}&sort={{ sort_by }}&page={{ page_obj.paginator.num_pages }}">Ultima &raquo;</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">Successiva</span>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link">Ultima &raquo;</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+<div class="mt-4">
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Torna alla Dashboard</a>
+</div>
+{% endblock %}

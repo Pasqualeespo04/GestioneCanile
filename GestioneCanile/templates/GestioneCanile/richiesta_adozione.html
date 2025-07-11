@@ -1,0 +1,98 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}Richiesta di adozione per {{ cane.nome }} - Gestione Canile{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h1>Richiesta di adozione</h1>
+        <h3>{{ cane.nome }} - {{ cane.razza }}</h3>
+        
+        {% if cane.foto %}
+        <img src="{{ cane.foto.url }}" class="img-fluid rounded mb-3" alt="{{ cane.nome }}">
+        {% else %}
+        <div class="bg-secondary text-white text-center p-5 rounded mb-3">
+            <i class="fas fa-dog fa-5x"></i>
+            <p class="mt-3">Nessuna foto disponibile</p>
+        </div>
+        {% endif %}
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Informazioni sul cane</h5>
+                <p class="card-text">
+                    <strong>Razza:</strong> {{ cane.razza }}<br>
+                    <strong>Età:</strong> {% if cane.eta %}{{ cane.eta }} anni{% else %}Età sconosciuta{% endif %}<br>
+                    <strong>Sesso:</strong> {{ cane.get_sesso_display }}<br>
+                    <strong>Canile:</strong> {{ cane.canile.nome }}
+                </p>
+                {% if cane.descrizione %}
+                <p class="card-text">{{ cane.descrizione|truncatewords:50 }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Compila il modulo di richiesta</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome *</label>
+                        <input type="text" class="form-control" id="nome" name="nome" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="cognome" class="form-label">Cognome *</label>
+                        <input type="text" class="form-control" id="cognome" name="cognome" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email *</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="telefono" class="form-label">Telefono *</label>
+                        <input type="tel" class="form-control" id="telefono" name="telefono" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="indirizzo" class="form-label">Indirizzo completo *</label>
+                        <input type="text" class="form-control" id="indirizzo" name="indirizzo" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="note" class="form-label">Note aggiuntive</label>
+                        <textarea class="form-control" id="note" name="note" rows="4" placeholder="Raccontaci qualcosa di te e perché vorresti adottare questo cane..."></textarea>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="privacy" required>
+                        <label class="form-check-label" for="privacy">
+                            Acconsento al trattamento dei miei dati personali ai sensi del GDPR *
+                        </label>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Invia richiesta di adozione</button>
+                        <a href="{% url 'dettaglio_cane' cane.id %}" class="btn btn-outline-secondary">Annulla</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-info">
+    <h4 class="alert-heading">Cosa succede dopo?</h4>
+    <p>Dopo aver inviato la richiesta di adozione, il nostro staff ti contatterà per fissare un appuntamento per conoscerti e per farti incontrare {{ cane.nome }}. Se tutto andrà bene, potrai portare a casa il tuo nuovo amico a quattro zampe!</p>
+    <hr>
+    <p class="mb-0">Per qualsiasi domanda, non esitare a contattarci al numero {{ cane.canile.telefono }} o via email a {{ cane.canile.email }}.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'GestioneCanile/base.html' %}
+
+{% block title %}Chi Siamo - Gestione Canile{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Chi Siamo</h1>
+        
+        <div class="card mb-5">
+            <div class="card-body">
+                <h2 class="card-title">La nostra missione</h2>
+                <p class="card-text">
+                    La nostra missione è quella di fornire un rifugio sicuro e amorevole per i cani abbandonati o maltrattati, 
+                    e di trovare loro una casa permanente dove possano essere amati e curati. Crediamo che ogni cane meriti 
+                    una seconda possibilità e lavoriamo instancabilmente per garantire che tutti i nostri ospiti ricevano 
+                    le cure mediche, l'attenzione e l'affetto di cui hanno bisogno.
+                </p>
+                <p class="card-text">
+                    Oltre a prenderci cura dei cani nel nostro canile, ci impegniamo anche a educare il pubblico sull'importanza 
+                    dell'adozione responsabile, della sterilizzazione e della castrazione, e del trattamento umano degli animali.
+                </p>
+            </div>
+        </div>
+        
+        <div class="card mb-5">
+            <div class="card-body">
+                <h2 class="card-title">La nostra storia</h2>
+                <p class="card-text">
+                    Il nostro canile è stato fondato nel 2010 da un gruppo di appassionati amanti degli animali che hanno 
+                    visto la necessità di un rifugio per cani nella nostra comunità. Da allora, siamo cresciuti fino a 
+                    diventare una delle principali organizzazioni di soccorso per cani nella regione, aiutando migliaia 
+                    di cani a trovare case amorevoli.
+                </p>
+                <p class="card-text">
+                    Nel corso degli anni, abbiamo ampliato le nostre strutture e i nostri servizi per soddisfare le 
+                    crescenti esigenze della comunità. Oggi, gestiamo diversi canili in tutta la regione e offriamo 
+                    una vasta gamma di servizi, tra cui adozioni, cure veterinarie, programmi educativi e molto altro.
+                </p>
+            </div>
+        </div>
+        
+        <h2 class="mb-4">I nostri canili</h2>
+        
+        <div class="row">
+            {% for canile in canili %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ canile.nome }}</h3>
+                        <p class="card-text">
+                            <strong>Indirizzo:</strong> {{ canile.indirizzo }}, {{ canile.citta }}<br>
+                            <strong>Telefono:</strong> {{ canile.telefono }}<br>
+                            <strong>Email:</strong> {{ canile.email }}<br>
+                            <strong>Capacità:</strong> {{ canile.capacita_massima }} cani
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'contatti' %}" class="btn btn-outline-primary">Contattaci</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>Non ci sono canili registrati al momento.</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="card mt-5">
+            <div class="card-body">
+                <h2 class="card-title">Come puoi aiutare</h2>
+                <p class="card-text">
+                    Ci sono molti modi in cui puoi aiutare i nostri amici a quattro zampe:
+                </p>
+                <ul>
+                    <li><strong>Adotta un cane:</strong> Dai una casa amorevole a uno dei nostri cani.</li>
+                    <li><strong>Diventa volontario:</strong> Aiutaci a prenderci cura dei cani nel nostro canile.</li>
+                    <li><strong>Dona:</strong> Le tue donazioni ci aiutano a fornire cibo, cure mediche e riparo ai cani bisognosi.</li>
+                    <li><strong>Sponsorizza un cane:</strong> Se non puoi adottare, puoi sponsorizzare un cane specifico per aiutare a coprire le sue spese.</li>
+                    <li><strong>Condividi:</strong> Aiutaci a diffondere la parola sui nostri cani disponibili per l'adozione.</li>
+                </ul>
+                <p class="card-text">
+                    Per maggiori informazioni su come puoi aiutare, visita la nostra pagina <a href="{% url 'contatti' %}">Contatti</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
