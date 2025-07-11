@@ -39,7 +39,7 @@ Il sistema prevede un'applicazione web user-friendly, pensata per semplificare i
 
 ### 1. Clona il repository
 ```bash
-git clone https://github.com/tuo-username/nome-repo.git
+git clone https://github.com/Pasqualeespo04/GestioneCanile
 cd nome-repo
 ```
 
