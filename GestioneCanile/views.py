@@ -5,10 +5,23 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from .models import Canile, Cane, RegistroSanitario, Adozione, Attivita
 from django.utils import timezone
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login, authenticate
 import csv
 import io
+import random
+import string
 
 # Create your views here.
+
+def genera_codice_tracciamento(length=8):
+    """Genera un codice di tracciamento univoco per le richieste di adozione"""
+    caratteri = string.ascii_uppercase + string.digits
+    while True:
+        codice = ''.join(random.choice(caratteri) for _ in range(length))
+        # Verifica che il codice non esista già nel database
+        if not Adozione.objects.filter(codice_tracciamento=codice).exists():
+            return codice
 def home(request):
     """Vista per la homepage del sito"""
     cani_disponibili = Cane.objects.filter(status='disponibile').order_by('-data_ingresso')[:6]
@@ -134,39 +147,216 @@ def dettaglio_cane(request, cane_id):
 
 def richiesta_adozione(request, cane_id):
     """Vista per richiedere l'adozione di un cane"""
-    cane = get_object_or_404(Cane, id=cane_id)
+    # Verifica se si tratta di un cane placeholder (ID da 1 a 6)
+    is_placeholder = 1 <= cane_id <= 6
 
-    # Verifica che il cane sia disponibile per l'adozione
-    if cane.status != 'disponibile':
-        messages.warning(request, "Questo cane non è attualmente disponibile per l'adozione.")
-        return redirect('dettaglio_cane', cane_id=cane_id)
+    if is_placeholder:
+        # Definisci i dettagli dei cani placeholder (stesso dizionario usato in dettaglio_cane_placeholder)
+        placeholder_dogs = {
+            1: {
+                'nome': 'Max',
+                'razza': 'Labrador',
+                'eta': 3,
+                'sesso': 'Maschio',
+                'peso': 30,
+                'taglia': 'Grande',
+                'sterilizzato': True,
+                'compatibile_bambini': True,
+                'compatibile_animali': True,
+                'descrizione': 'Max è un labrador molto affettuoso e giocherellone.',
+                'canile': 'Canile Municipale'
+            },
+            2: {
+                'nome': 'Luna',
+                'razza': 'Pastore Tedesco',
+                'eta': 2,
+                'sesso': 'Femmina',
+                'peso': 25,
+                'taglia': 'Grande',
+                'sterilizzato': True,
+                'compatibile_bambini': True,
+                'compatibile_animali': False,
+                'descrizione': 'Luna è una pastore tedesco molto intelligente e protettiva.',
+                'canile': 'Canile Municipale'
+            },
+            3: {
+                'nome': 'Rocky',
+                'razza': 'Bulldog',
+                'eta': 4,
+                'sesso': 'Maschio',
+                'peso': 20,
+                'taglia': 'Media',
+                'sterilizzato': True,
+                'compatibile_bambini': True,
+                'compatibile_animali': True,
+                'descrizione': 'Rocky è un bulldog tranquillo e affettuoso.',
+                'canile': 'Canile Municipale'
+            },
+            4: {
+                'nome': 'Bella',
+                'razza': 'Beagle',
+                'eta': 1,
+                'sesso': 'Femmina',
+                'peso': 10,
+                'taglia': 'Piccola',
+                'sterilizzato': False,
+                'compatibile_bambini': True,
+                'compatibile_animali': True,
+                'descrizione': 'Bella è una beagle giovane e vivace.',
+                'canile': 'Canile Municipale'
+            },
+            5: {
+                'nome': 'Charlie',
+                'razza': 'Golden Retriever',
+                'eta': 5,
+                'sesso': 'Maschio',
+                'peso': 32,
+                'taglia': 'Grande',
+                'sterilizzato': True,
+                'compatibile_bambini': True,
+                'compatibile_animali': True,
+                'descrizione': 'Charlie è un golden retriever maturo e tranquillo.',
+                'canile': 'Canile Municipale'
+            },
+            6: {
+                'nome': 'Daisy',
+                'razza': 'Barboncino',
+                'eta': 2,
+                'sesso': 'Femmina',
+                'peso': 5,
+                'taglia': 'Piccola',
+                'sterilizzato': True,
+                'compatibile_bambini': True,
+                'compatibile_animali': True,
+                'descrizione': 'Daisy è un barboncino toy molto vivace e affettuosa.',
+                'canile': 'Canile Municipale'
+            }
+        }
 
-    if request.method == 'POST':
-        # Processa il form di richiesta adozione
-        adozione = Adozione(
-            cane=cane,
-            adottante_nome=request.POST.get('nome'),
-            adottante_cognome=request.POST.get('cognome'),
-            adottante_email=request.POST.get('email'),
-            adottante_telefono=request.POST.get('telefono'),
-            adottante_indirizzo=request.POST.get('indirizzo'),
-            data_richiesta=timezone.now(),
-            status='richiesta',
-            note=request.POST.get('note', '')
-        )
-        adozione.save()
+        # Ottieni i dettagli del cane placeholder
+        cane_placeholder = placeholder_dogs.get(cane_id)
 
-        # Aggiorna lo status del cane
-        cane.status = 'in_adozione'
-        cane.save()
+        if not cane_placeholder:
+            messages.warning(request, "Questo cane non esiste.")
+            return redirect('cani_disponibili_foto')
 
-        messages.success(request, f"La tua richiesta di adozione per {cane.nome} è stata inviata con successo. Ti contatteremo presto!")
-        return redirect('conferma_adozione', adozione_id=adozione.id)
+        # Per i placeholder, gestiamo sia GET che POST
+        if request.method == 'POST':
+            # Verifica che i termini siano stati accettati
+            if not request.POST.get('accetta_termini'):
+                messages.error(request, "Devi accettare i termini e le condizioni per procedere con la richiesta di adozione.")
+                return redirect('richiesta_adozione', cane_id=cane_id)
 
-    context = {
-        'cane': cane,
-    }
-    return render(request, 'GestioneCanile/richiesta_adozione.html', context)
+            # Per i placeholder, mostriamo solo un messaggio di successo senza salvare nel database
+            # Generiamo comunque un codice di tracciamento per permettere all'utente di tracciare la richiesta
+            codice_tracciamento = genera_codice_tracciamento()
+            messages.success(request, f"La tua richiesta di adozione per {cane_placeholder['nome']} è stata inviata con successo. Il tuo codice di tracciamento è: {codice_tracciamento}. Ti contatteremo presto!")
+
+            # Salviamo temporaneamente l'adozione in sessione per mostrarla nella pagina di conferma
+            # Generiamo un URL di placeholder per la foto del cane
+            placeholder_foto = f'https://placedog.net/500/280?id={cane_id}'
+
+            request.session['adozione_placeholder'] = {
+                'nome_cane': cane_placeholder['nome'],
+                'razza_cane': cane_placeholder['razza'],
+                'adottante_nome': request.POST.get('nome', ''),
+                'adottante_cognome': request.POST.get('cognome', ''),
+                'adottante_email': request.POST.get('email', ''),
+                'adottante_telefono': request.POST.get('telefono', ''),
+                'data_richiesta': timezone.now().strftime('%Y-%m-%d'),
+                'codice_tracciamento': codice_tracciamento,
+                'status': 'richiesta',
+                'foto_cane': placeholder_foto
+            }
+
+            # Creiamo un'adozione reale nel database per permettere il tracciamento
+            try:
+                # Troviamo un cane reale disponibile o usiamo il primo disponibile
+                cane_reale = Cane.objects.filter(status='disponibile').first()
+                if cane_reale:
+                    adozione = Adozione(
+                        cane=cane_reale,
+                        adottante_nome=request.POST.get('nome', ''),
+                        adottante_cognome=request.POST.get('cognome', ''),
+                        adottante_email=request.POST.get('email', ''),
+                        adottante_telefono=request.POST.get('telefono', ''),
+                        adottante_indirizzo=request.POST.get('indirizzo', ''),
+                        tipo_abitazione=request.POST.get('tipo_abitazione', 'appartamento'),
+                        esperienza_animali=request.POST.get('esperienza_animali', 'nessuna'),
+                        presenza_bambini='presenza_bambini' in request.POST,
+                        presenza_altri_animali='presenza_altri_animali' in request.POST,
+                        descrizione_altri_animali=request.POST.get('descrizione_altri_animali', ''),
+                        ricevi_aggiornamenti_email='ricevi_aggiornamenti_email' in request.POST,
+                        ricevi_aggiornamenti_sms='ricevi_aggiornamenti_sms' in request.POST,
+                        accetta_termini=True,
+                        data_richiesta=timezone.now(),
+                        status='richiesta',
+                        note=f"Adozione placeholder per {cane_placeholder['nome']} (ID: {cane_id})",
+                        codice_tracciamento=codice_tracciamento
+                    )
+                    adozione.save()
+                    return redirect('conferma_adozione', adozione_id=adozione.id)
+            except Exception as e:
+                # Se qualcosa va storto, continuiamo con il redirect normale
+                pass
+
+            return redirect('cani_disponibili_foto')
+
+        # Per i placeholder, usiamo un contesto diverso
+        context = {
+            'cane_placeholder': cane_placeholder,
+            'placeholder_id': cane_id,
+        }
+        return render(request, 'GestioneCanile/richiesta_adozione_placeholder.html', context)
+    else:
+        # Per i cani reali, procedi come prima
+        cane = get_object_or_404(Cane, id=cane_id)
+
+        # Verifica che il cane sia disponibile per l'adozione
+        if cane.status != 'disponibile':
+            messages.warning(request, "Questo cane non è attualmente disponibile per l'adozione.")
+            return redirect('dettaglio_cane', cane_id=cane_id)
+
+        if request.method == 'POST':
+            # Verifica che i termini siano stati accettati
+            if not request.POST.get('accetta_termini'):
+                messages.error(request, "Devi accettare i termini e le condizioni per procedere con la richiesta di adozione.")
+                return redirect('richiesta_adozione', cane_id=cane_id)
+
+            # Processa il form di richiesta adozione
+            adozione = Adozione(
+                cane=cane,
+                adottante_nome=request.POST.get('nome'),
+                adottante_cognome=request.POST.get('cognome'),
+                adottante_email=request.POST.get('email'),
+                adottante_telefono=request.POST.get('telefono'),
+                adottante_indirizzo=request.POST.get('indirizzo'),
+                tipo_abitazione=request.POST.get('tipo_abitazione'),
+                esperienza_animali=request.POST.get('esperienza_animali'),
+                presenza_bambini='presenza_bambini' in request.POST,
+                presenza_altri_animali='presenza_altri_animali' in request.POST,
+                descrizione_altri_animali=request.POST.get('descrizione_altri_animali', ''),
+                ricevi_aggiornamenti_email='ricevi_aggiornamenti_email' in request.POST,
+                ricevi_aggiornamenti_sms='ricevi_aggiornamenti_sms' in request.POST,
+                accetta_termini=True,  # Se arriviamo qui, i termini sono stati accettati
+                data_richiesta=timezone.now(),
+                status='richiesta',
+                note=request.POST.get('note', ''),
+                codice_tracciamento=genera_codice_tracciamento()
+            )
+            adozione.save()
+
+            # Aggiorna lo status del cane
+            cane.status = 'in_adozione'
+            cane.save()
+
+            messages.success(request, f"La tua richiesta di adozione per {cane.nome} è stata inviata con successo. Il tuo codice di tracciamento è: {adozione.codice_tracciamento}. Ti contatteremo presto!")
+            return redirect('conferma_adozione', adozione_id=adozione.id)
+
+        context = {
+            'cane': cane,
+        }
+        return render(request, 'GestioneCanile/richiesta_adozione.html', context)
 
 def conferma_adozione(request, adozione_id):
     """Vista per confermare la richiesta di adozione"""
@@ -179,21 +369,40 @@ def conferma_adozione(request, adozione_id):
 
 def chi_siamo(request):
     """Vista per la pagina 'Chi Siamo'"""
-    canili = Canile.objects.all()
-
-    context = {
-        'canili': canili,
-    }
+    context = {}
     return render(request, 'GestioneCanile/chi_siamo.html', context)
 
 def contatti(request):
     """Vista per la pagina dei contatti"""
-    canili = Canile.objects.all()
+    context = {}
+    return render(request, 'GestioneCanile/contatti.html', context)
+
+def traccia_adozione(request):
+    """Vista per tracciare lo stato di una richiesta di adozione tramite codice"""
+    adozione = None
+    messaggio_errore = None
+    adozione_placeholder = None
+
+    if request.method == 'POST':
+        codice = request.POST.get('codice_tracciamento', '').strip().upper()
+        if codice:
+            try:
+                adozione = Adozione.objects.get(codice_tracciamento=codice)
+            except Adozione.DoesNotExist:
+                # Verifica se esiste un'adozione placeholder nella sessione
+                if 'adozione_placeholder' in request.session and request.session['adozione_placeholder'].get('codice_tracciamento') == codice:
+                    adozione_placeholder = request.session['adozione_placeholder']
+                else:
+                    messaggio_errore = "Nessuna richiesta trovata con questo codice. Verifica di aver inserito il codice correttamente."
+        else:
+            messaggio_errore = "Inserisci il codice di tracciamento per verificare lo stato della tua richiesta."
 
     context = {
-        'canili': canili,
+        'adozione': adozione,
+        'adozione_placeholder': adozione_placeholder,
+        'messaggio_errore': messaggio_errore,
     }
-    return render(request, 'GestioneCanile/contatti.html', context)
+    return render(request, 'GestioneCanile/traccia_adozione.html', context)
 
 # Viste per l'area amministrativa (riservate agli utenti autenticati)
 @login_required
@@ -402,3 +611,172 @@ def import_cani(request):
         'canili': canili
     }
     return render(request, 'GestioneCanile/import_cani.html', context)
+
+def cani_disponibili_foto(request):
+    """Vista per visualizzare le foto di tutti i cani disponibili senza alcun criterio di filtro"""
+    # Ottiene tutti i cani con status 'disponibile' senza applicare filtri
+    cani = Cane.objects.filter(status='disponibile').order_by('-data_ingresso')
+
+    # Se non ci sono cani disponibili, mostra comunque alcuni cani (anche con altri status)
+    if not cani.exists():
+        # Prendi cani con qualsiasi status, escludendo quelli già adottati
+        cani = Cane.objects.exclude(status='adottato').order_by('-data_ingresso')
+
+        # Se ancora non ci sono cani, prendi tutti i cani nel sistema
+        if not cani.exists():
+            cani = Cane.objects.all().order_by('-data_ingresso')
+
+    # Paginazione
+    paginator = Paginator(cani, 12)  # 12 cani per pagina
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+        'title': 'Adotta un cane',
+    }
+    return render(request, 'GestioneCanile/cani_disponibili_foto.html', context)
+
+def dettaglio_cane_placeholder(request, placeholder_id):
+    """Vista per visualizzare i dettagli di un cane placeholder"""
+    # Definisci i dettagli dei cani placeholder
+    placeholder_dogs = {
+        1: {
+            'nome': 'Max',
+            'razza': 'Labrador',
+            'eta': 3,
+            'sesso': 'Maschio',
+            'peso': 30,
+            'taglia': 'Grande',
+            'sterilizzato': True,
+            'compatibile_bambini': True,
+            'compatibile_animali': True,
+            'descrizione': 'Max è un labrador molto affettuoso e giocherellone. Ama correre e giocare con la palla. È molto socievole con le persone e gli altri cani. Ha bisogno di molto esercizio fisico e di una famiglia attiva che lo porti spesso a passeggio.',
+            'canile': 'Canile Municipale'
+        },
+        2: {
+            'nome': 'Luna',
+            'razza': 'Pastore Tedesco',
+            'eta': 2,
+            'sesso': 'Femmina',
+            'peso': 25,
+            'taglia': 'Grande',
+            'sterilizzato': True,
+            'compatibile_bambini': True,
+            'compatibile_animali': False,
+            'descrizione': 'Luna è una pastore tedesco molto intelligente e protettiva. È molto affettuosa con la sua famiglia ma può essere diffidente con gli estranei. Ha bisogno di stimolazione mentale e di un proprietario esperto che la guidi con fermezza ma dolcezza.',
+            'canile': 'Canile Municipale'
+        },
+        3: {
+            'nome': 'Rocky',
+            'razza': 'Bulldog',
+            'eta': 4,
+            'sesso': 'Maschio',
+            'peso': 20,
+            'taglia': 'Media',
+            'sterilizzato': True,
+            'compatibile_bambini': True,
+            'compatibile_animali': True,
+            'descrizione': 'Rocky è un bulldog tranquillo e affettuoso. Ama stare sul divano e ricevere coccole. Non ha bisogno di molto esercizio fisico ma ama le passeggiate tranquille. È molto paziente con i bambini e va d\'accordo con gli altri animali.',
+            'canile': 'Canile Municipale'
+        },
+        4: {
+            'nome': 'Bella',
+            'razza': 'Beagle',
+            'eta': 1,
+            'sesso': 'Femmina',
+            'peso': 10,
+            'taglia': 'Piccola',
+            'sterilizzato': False,
+            'compatibile_bambini': True,
+            'compatibile_animali': True,
+            'descrizione': 'Bella è una beagle giovane e vivace. Ama esplorare e seguire le tracce con il suo naso. È molto socievole e ama giocare con i bambini e gli altri cani. Ha bisogno di un giardino recintato perché tende a seguire gli odori e potrebbe allontanarsi.',
+            'canile': 'Canile Municipale'
+        },
+        5: {
+            'nome': 'Charlie',
+            'razza': 'Golden Retriever',
+            'eta': 5,
+            'sesso': 'Maschio',
+            'peso': 32,
+            'taglia': 'Grande',
+            'sterilizzato': True,
+            'compatibile_bambini': True,
+            'compatibile_animali': True,
+            'descrizione': 'Charlie è un golden retriever maturo e tranquillo. È molto affettuoso e paziente, perfetto per una famiglia con bambini. Ama nuotare e recuperare oggetti. È molto intelligente e facile da addestrare. Ha bisogno di esercizio regolare ma non eccessivo.',
+            'canile': 'Canile Municipale'
+        },
+        6: {
+            'nome': 'Daisy',
+            'razza': 'Barboncino',
+            'eta': 2,
+            'sesso': 'Femmina',
+            'peso': 5,
+            'taglia': 'Piccola',
+            'sterilizzato': True,
+            'compatibile_bambini': True,
+            'compatibile_animali': True,
+            'descrizione': 'Daisy è un barboncino toy molto vivace e affettuosa. È molto intelligente e impara rapidamente i comandi. Non perde pelo, quindi è adatta anche a persone allergiche. Ama giocare e ricevere attenzioni. Ha bisogno di passeggiate regolari e di stimolazione mentale.',
+            'canile': 'Canile Municipale'
+        }
+    }
+
+    # Verifica che l'ID del placeholder sia valido
+    if placeholder_id < 1 or placeholder_id > 6:
+        messages.warning(request, "Questo cane non esiste.")
+        return redirect('cani_disponibili_foto')
+
+    # Ottieni i dettagli del cane placeholder
+    cane_placeholder = placeholder_dogs[placeholder_id]
+
+    context = {
+        'cane_placeholder': cane_placeholder,
+        'placeholder_id': placeholder_id,
+    }
+    return render(request, 'GestioneCanile/dettaglio_cane_placeholder.html', context)
+
+
+def register(request):
+    """
+    Vista per la registrazione di un nuovo utente
+    """
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            messages.success(request, f'Account creato con successo! Benvenuto, {username}!')
+            return redirect('home')
+        else:
+            for msg in form.error_messages:
+                messages.error(request, f"{msg}: {form.error_messages[msg]}")
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'GestioneCanile/register.html', {'form': form})
+
+def user_login(request):
+    """
+    Vista per il login di un utente
+    """
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, f'Benvenuto, {username}!')
+                return redirect('home')
+            else:
+                messages.error(request, 'Username o password non validi.')
+        else:
+            messages.error(request, 'Username o password non validi.')
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'GestioneCanile/login.html', {'form': form})

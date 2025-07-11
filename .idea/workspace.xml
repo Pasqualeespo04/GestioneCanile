@@ -4,7 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="561816f1-d588-4244-86c0-89fb99052b03" name="Changes" comment="Commit" />
+    <list default="true" id="561816f1-d588-4244-86c0-89fb99052b03" name="Changes" comment="Commit">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GestioneCanile/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/GestioneCanile/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GestioneCanile/templates/GestioneCanile/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/GestioneCanile/templates/GestioneCanile/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GestioneCanile/templates/GestioneCanile/conferma_adozione.html" beforeDir="false" afterPath="$PROJECT_DIR$/GestioneCanile/templates/GestioneCanile/conferma_adozione.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GestioneCanile/templates/GestioneCanile/gestione_adozioni.html" beforeDir="false" afterPath="$PROJECT_DIR$/GestioneCanile/templates/GestioneCanile/gestione_adozioni.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GestioneCanile/templates/GestioneCanile/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/GestioneCanile/templates/GestioneCanile/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GestioneCanile/templates/GestioneCanile/lista_cani.html" beforeDir="false" afterPath="$PROJECT_DIR$/GestioneCanile/templates/GestioneCanile/lista_cani.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GestioneCanile/templates/GestioneCanile/richiesta_adozione.html" beforeDir="false" afterPath="$PROJECT_DIR$/GestioneCanile/templates/GestioneCanile/richiesta_adozione.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GestioneCanile/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/GestioneCanile/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GestioneCanile/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/GestioneCanile/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,12 +25,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Pasqualeespo04/GestioneCanile",
-    "accountId": "ffa5f063-f6cc-4fa2-bacd-ec4a98ee06e8"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Pasqualeespo04&quot;
   }
-}]]></component>
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Pasqualeespo04/GestioneCanile&quot;,
+    &quot;accountId&quot;: &quot;ffa5f063-f6cc-4fa2-bacd-ec4a98ee06e8&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -87,7 +105,8 @@
       <option name="presentableId" value="Default" />
       <updated>1752253550822</updated>
       <workItem from="1752253551933" duration="3110000" />
-      <workItem from="1752256717069" duration="1547000" />
+      <workItem from="1752256717069" duration="2343000" />
+      <workItem from="1752260474551" duration="8235000" />
     </task>
     <task id="LOCAL-00001" summary="Commit">
       <option name="closed" value="true" />
@@ -97,7 +116,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752258253154</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Commit">
+      <option name="closed" value="true" />
+      <created>1752258418279</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1752258418279</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

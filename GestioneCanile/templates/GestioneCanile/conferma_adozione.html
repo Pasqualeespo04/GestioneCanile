@@ -1,62 +1,278 @@
 {% extends 'GestioneCanile/base.html' %}
 
-{% block title %}Richiesta di adozione inviata - Gestione Canile{% endblock %}
+{% block title %}Richiesta di adozione inviata - Amici a 4 Zampe{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card border-success mb-4">
-            <div class="card-header bg-success text-white">
-                <h3 class="mb-0">Richiesta di adozione inviata con successo!</h3>
-            </div>
-            <div class="card-body">
-                <h4>Grazie per la tua richiesta di adozione per {{ adozione.cane.nome }}!</h4>
-                
-                <p class="lead mt-4">Ecco i dettagli della tua richiesta:</p>
-                
-                <table class="table mt-3">
-                    <tr>
-                        <th style="width: 30%">Cane:</th>
-                        <td>{{ adozione.cane.nome }} ({{ adozione.cane.razza }})</td>
-                    </tr>
-                    <tr>
-                        <th>Richiedente:</th>
-                        <td>{{ adozione.adottante_nome }} {{ adozione.adottante_cognome }}</td>
-                    </tr>
-                    <tr>
-                        <th>Email:</th>
-                        <td>{{ adozione.adottante_email }}</td>
-                    </tr>
-                    <tr>
-                        <th>Telefono:</th>
-                        <td>{{ adozione.adottante_telefono }}</td>
-                    </tr>
-                    <tr>
-                        <th>Data richiesta:</th>
-                        <td>{{ adozione.data_richiesta }}</td>
-                    </tr>
-                    <tr>
-                        <th>Stato:</th>
-                        <td>
-                            <span class="badge bg-warning text-dark">{{ adozione.get_status_display }}</span>
-                        </td>
-                    </tr>
-                </table>
-                
-                <div class="alert alert-info mt-4">
-                    <h5 class="alert-heading">Cosa succede ora?</h5>
-                    <p>Il nostro staff esaminerà la tua richiesta e ti contatterà al più presto per fissare un appuntamento. Ti preghiamo di tenere il telefono a portata di mano e di controllare regolarmente la tua email.</p>
-                    <hr>
-                    <p class="mb-0">Per qualsiasi domanda, non esitare a contattarci al numero {{ adozione.cane.canile.telefono }} o via email a {{ adozione.cane.canile.email }}.</p>
+<div class="py-5 position-relative">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Confetti animation container -->
+                <div class="position-absolute w-100" style="top: -50px; left: 0; height: 100px; overflow: hidden; z-index: 1;">
+                    <div class="position-relative w-100 h-100">
+                        {% for i in "123456789"|make_list %}
+                        <div class="position-absolute" style="
+                            top: {{ forloop.counter0|add:10 }}px; 
+                            left: {{ forloop.counter|mul:10 }}%; 
+                            width: 10px; 
+                            height: 10px; 
+                            background-color: {% cycle '#3498db' '#2ecc71' '#f39c12' '#e74c3c' '#9b59b6' %}; 
+                            border-radius: 50%;
+                            animation: fall-{{ forloop.counter }} 3s linear infinite;
+                        "></div>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
-            <div class="card-footer">
-                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                    <a href="{% url 'home' %}" class="btn btn-primary me-md-2">Torna alla home</a>
-                    <a href="{% url 'lista_cani' %}" class="btn btn-outline-secondary">Visualizza altri cani</a>
+
+                <div class="card border-0 shadow-lg rounded-3 overflow-hidden position-relative">
+                    <!-- Success banner -->
+                    <div class="bg-success text-white text-center p-5 position-relative overflow-hidden">
+                        <div class="position-absolute" style="top: -15px; right: -15px; opacity: 0.1;">
+                            <i class="fas fa-paw fa-10x"></i>
+                        </div>
+                        <div class="position-relative">
+                            <div class="display-1 mb-2">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <h1 class="display-5 fw-bold mb-3">Richiesta Inviata con Successo!</h1>
+                            <p class="lead mb-0">Grazie per aver fatto il primo passo verso una nuova amicizia</p>
+                            {% if adozione.codice_tracciamento %}
+                            <div class="mt-4 p-3 bg-white text-dark rounded-3 d-inline-block">
+                                <h4 class="mb-1">Il tuo codice di tracciamento</h4>
+                                <div class="display-6 fw-bold text-primary">{{ adozione.codice_tracciamento }}</div>
+                                <p class="small mt-2 mb-0">Conserva questo codice per verificare lo stato della tua richiesta</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="card-body p-5">
+                        <div class="row">
+                            <div class="col-md-5 mb-4 mb-md-0">
+                                <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden">
+                                    {% if adozione.cane.foto %}
+                                    <img src="{{ adozione.cane.foto.url }}" class="card-img-top" alt="{{ adozione.cane.nome }}" style="height: 250px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-primary bg-opacity-10 text-center p-5" style="height: 250px;">
+                                        <i class="fas fa-dog fa-5x text-primary opacity-50 mt-4"></i>
+                                        <p class="mt-3 text-muted">Foto in arrivo</p>
+                                    </div>
+                                    {% endif %}
+                                    <div class="card-body text-center">
+                                        <h3 class="card-title text-primary">{{ adozione.cane.nome }}</h3>
+                                        <p class="text-muted">{{ adozione.cane.razza }}</p>
+                                        <div class="d-flex justify-content-center gap-2 mb-3">
+                                            <span class="badge bg-primary rounded-pill px-3 py-2">
+                                                <i class="fas fa-{% if adozione.cane.sesso == 'M' %}mars{% else %}venus{% endif %} me-1"></i>
+                                                {{ adozione.cane.get_sesso_display }}
+                                            </span>
+                                            {% if adozione.cane.eta %}
+                                            <span class="badge bg-info rounded-pill px-3 py-2">
+                                                <i class="fas fa-birthday-cake me-1"></i>
+                                                {{ adozione.cane.eta }} anni
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                        <a href="{% url 'dettaglio_cane' adozione.cane.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-paw me-1"></i> Profilo completo
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-7">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; min-width: 50px;">
+                                        <i class="fas fa-file-alt text-white"></i>
+                                    </div>
+                                    <h3 class="ms-3 mb-0">Dettagli della richiesta</h3>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <th class="ps-0" style="width: 40%"><i class="fas fa-user text-primary me-2"></i>Richiedente:</th>
+                                            <td class="fw-bold">{{ adozione.adottante_nome }} {{ adozione.adottante_cognome }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="ps-0"><i class="fas fa-envelope text-primary me-2"></i>Email:</th>
+                                            <td>{{ adozione.adottante_email }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="ps-0"><i class="fas fa-phone text-primary me-2"></i>Telefono:</th>
+                                            <td>{{ adozione.adottante_telefono }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="ps-0"><i class="fas fa-home text-primary me-2"></i>Tipo abitazione:</th>
+                                            <td>{{ adozione.get_tipo_abitazione_display }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="ps-0"><i class="fas fa-paw text-primary me-2"></i>Esperienza:</th>
+                                            <td>{{ adozione.get_esperienza_animali_display }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="ps-0"><i class="fas fa-calendar-alt text-primary me-2"></i>Data richiesta:</th>
+                                            <td>{{ adozione.data_richiesta }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="ps-0"><i class="fas fa-info-circle text-primary me-2"></i>Stato:</th>
+                                            <td>
+                                                <span class="badge bg-warning text-dark px-3 py-2">{{ adozione.get_status_display }}</span>
+                                            </td>
+                                        </tr>
+                                        {% if adozione.codice_tracciamento %}
+                                        <tr>
+                                            <th class="ps-0"><i class="fas fa-qrcode text-primary me-2"></i>Codice di tracciamento:</th>
+                                            <td>
+                                                <span class="badge bg-primary px-3 py-2">{{ adozione.codice_tracciamento }}</span>
+                                                <small class="d-block mt-1 text-muted">Usa questo codice per <a href="{% url 'traccia_adozione' %}" class="text-primary">tracciare lo stato della tua richiesta</a></small>
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                    </table>
+                                </div>
+
+                                <div class="card bg-light border-0 rounded-3 mt-4">
+                                    <div class="card-body p-4">
+                                        <h4 class="d-flex align-items-center">
+                                            <i class="fas fa-question-circle text-primary me-2"></i>
+                                            Processo di adozione
+                                        </h4>
+                                        <ul class="timeline mt-4">
+                                            <li class="timeline-item active">
+                                                <div class="timeline-marker"></div>
+                                                <div class="timeline-content">
+                                                    <h5 class="timeline-title">1. Invio della richiesta</h5>
+                                                    <p class="text-success"><i class="fas fa-check-circle me-1"></i> Completato!</p>
+                                                </div>
+                                            </li>
+                                            <li class="timeline-item">
+                                                <div class="timeline-marker"></div>
+                                                <div class="timeline-content">
+                                                    <h5 class="timeline-title">2. Revisione della richiesta</h5>
+                                                    <p>Il canile valuterà se le condizioni dichiarate sono adatte per {{ adozione.cane.nome }}.</p>
+                                                </div>
+                                            </li>
+                                            <li class="timeline-item">
+                                                <div class="timeline-marker"></div>
+                                                <div class="timeline-content">
+                                                    <h5 class="timeline-title">3. Colloquio</h5>
+                                                    <p>Se la richiesta è valida, ti contatteremo per un colloquio.</p>
+                                                </div>
+                                            </li>
+                                            <li class="timeline-item">
+                                                <div class="timeline-marker"></div>
+                                                <div class="timeline-content">
+                                                    <h5 class="timeline-title">4. Visita a domicilio</h5>
+                                                    <p>Un operatore potrebbe fare un sopralluogo a casa per verificare l'ambiente.</p>
+                                                </div>
+                                            </li>
+                                            <li class="timeline-item">
+                                                <div class="timeline-marker"></div>
+                                                <div class="timeline-content">
+                                                    <h5 class="timeline-title">5. Finalizzazione</h5>
+                                                    <p>Se tutto va bene, potrai accogliere {{ adozione.cane.nome }} nella tua famiglia!</p>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <hr>
+                                        <p class="mb-0 d-flex align-items-center">
+                                            <i class="fas fa-headset text-primary me-2"></i>
+                                            Per qualsiasi domanda, contattaci al <strong>{{ adozione.cane.canile.telefono }}</strong> o via email a <strong>{{ adozione.cane.canile.email }}</strong>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-light p-4 text-center">
+                        <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                            <a href="{% url 'home' %}" class="btn btn-primary px-4">
+                                <i class="fas fa-home me-2"></i>Torna alla home
+                            </a>
+                            <a href="{% url 'cani_disponibili_foto' %}" class="btn btn-outline-primary px-4">
+                                <i class="fas fa-search me-2"></i>Visualizza altri cani
+                            </a>
+                            <a href="{% url 'gestione_adozioni' %}" class="btn btn-outline-secondary px-4">
+                                <i class="fas fa-clipboard-list me-2"></i>Le mie richieste
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-5">
+                    <p class="lead">Grazie per aver scelto di adottare invece di comprare! <i class="fas fa-heart text-danger"></i></p>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Decorative elements -->
+    <div class="position-absolute" style="bottom: 50px; left: 0; opacity: 0.03;">
+        <i class="fas fa-bone fa-8x"></i>
+    </div>
+    <div class="position-absolute" style="top: 100px; right: 0; opacity: 0.03;">
+        <i class="fas fa-paw fa-8x"></i>
+    </div>
 </div>
+
+<style>
+@keyframes fall-1 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(1000px) rotate(360deg); } }
+@keyframes fall-2 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(1000px) rotate(-360deg); } }
+@keyframes fall-3 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(1000px) rotate(180deg); } }
+@keyframes fall-4 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(1000px) rotate(-180deg); } }
+@keyframes fall-5 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(1000px) rotate(90deg); } }
+@keyframes fall-6 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(1000px) rotate(-90deg); } }
+@keyframes fall-7 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(1000px) rotate(45deg); } }
+@keyframes fall-8 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(1000px) rotate(-45deg); } }
+@keyframes fall-9 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(1000px) rotate(135deg); } }
+
+/* Stile per la timeline */
+.timeline {
+    list-style-type: none;
+    position: relative;
+    padding-left: 30px;
+    margin-left: 10px;
+}
+
+.timeline:before {
+    content: ' ';
+    background: #dee2e6;
+    display: inline-block;
+    position: absolute;
+    left: 10px;
+    width: 2px;
+    height: 100%;
+    z-index: 400;
+}
+
+.timeline-item {
+    margin: 20px 0;
+}
+
+.timeline-item.active .timeline-marker {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid #dee2e6;
+    background-color: white;
+    margin-left: 1px;
+}
+
+.timeline-content {
+    padding-left: 15px;
+}
+
+.timeline-title {
+    margin-bottom: 5px;
+}
+</style>
 {% endblock %}

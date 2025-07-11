@@ -4,160 +4,300 @@
 
 {% block content %}
 <!-- Hero Section -->
-<div class="jumbotron bg-light p-5 rounded">
-    <h1 class="display-4">Sistema Gestione Canili</h1>
-    <p class="lead">Digitalizzazione e gestione efficiente delle attività di accoglienza, monitoraggio sanitario e adozione dei cani randagi o abbandonati.</p>
-    <hr class="my-4">
-    <p>Abbiamo attualmente {{ total_cani_disponibili }} cani in attesa di una nuova famiglia.</p>
-    <a class="btn btn-primary btn-lg" href="{% url 'lista_cani' %}" role="button">Vedi i cani disponibili</a>
+<div class="jumbotron p-5 rounded position-relative overflow-hidden">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold mb-4">Trova il tuo <span class="text-primary">amico</span> a quattro zampe</h1>
+            <p class="lead mb-4">Ogni cane merita una casa piena d'amore. Adotta un amico fedele che ti accompagnerà in tutte le avventure della vita.</p>
+            <div class="d-flex align-items-center mb-4">
+                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                    <i class="fas fa-dog text-white fa-lg"></i>
+                </div>
+                <p class="ms-3 mb-0 fs-5">Abbiamo attualmente <strong class="text-primary">{{ total_cani_disponibili }}</strong> cani in attesa di una nuova famiglia.</p>
+            </div>
+            <div class="d-grid gap-2 d-md-flex">
+                <a class="btn btn-primary btn-lg px-4 me-md-2" href="{% url 'cani_disponibili_foto' %}">
+                    <i class="fas fa-heart me-2"></i>Adotta ora
+                </a>
+                <a class="btn btn-outline-secondary btn-lg px-4" href="{% url 'chi_siamo' %}">
+                    <i class="fas fa-info-circle me-2"></i>Scopri di più
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6 d-none d-lg-block">
+            <div class="position-relative" style="height: 400px;">
+                <img src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="position-absolute rounded-circle shadow-lg" style="width: 250px; height: 250px; object-fit: cover; top: 0; right: 0; z-index: 1;">
+                <img src="https://images.unsplash.com/photo-1583511666372-62fc211f8377?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="position-absolute rounded-circle shadow-lg" style="width: 200px; height: 200px; object-fit: cover; bottom: 0; right: 100px; z-index: 2;">
+                <img src="https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" class="position-absolute rounded-circle shadow-lg" style="width: 180px; height: 180px; object-fit: cover; top: 50px; left: 0; z-index: 3;">
+            </div>
+        </div>
+    </div>
+    <div class="position-absolute" style="bottom: -10px; right: -10px; width: 100px; height: 100px; opacity: 0.1; z-index: 0;">
+        <i class="fas fa-paw fa-10x"></i>
+    </div>
 </div>
 
 <!-- Statistiche -->
-<div class="row mt-5 text-center">
-    <div class="col-12">
-        <h2 class="mb-4">Il nostro impatto</h2>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <h3 class="card-title text-primary">{{ total_cani }}</h3>
-                <p class="card-text">Cani aiutati</p>
+<div class="py-5 mt-4 bg-light rounded-3 position-relative overflow-hidden">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold"><i class="fas fa-chart-line text-primary me-2"></i>Il nostro impatto</h2>
+            <p class="lead">Ogni numero rappresenta una vita cambiata grazie al vostro supporto</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center py-4 position-relative overflow-hidden">
+                    <div class="position-absolute" style="top: -15px; right: -15px; opacity: 0.05;">
+                        <i class="fas fa-paw fa-5x"></i>
+                    </div>
+                    <div class="card-body">
+                        <div class="rounded-circle bg-primary mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-dog text-white fa-2x"></i>
+                        </div>
+                        <h3 class="display-4 fw-bold text-primary mb-0">{{ total_cani }}</h3>
+                        <p class="text-muted">Cani aiutati</p>
+                        <div class="progress mt-3" style="height: 5px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center py-4 position-relative overflow-hidden">
+                    <div class="position-absolute" style="top: -15px; right: -15px; opacity: 0.05;">
+                        <i class="fas fa-home fa-5x"></i>
+                    </div>
+                    <div class="card-body">
+                        <div class="rounded-circle bg-success mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-home text-white fa-2x"></i>
+                        </div>
+                        <h3 class="display-4 fw-bold text-success mb-0">{{ adozioni_completate }}</h3>
+                        <p class="text-muted">Adozioni completate</p>
+                        <div class="progress mt-3" style="height: 5px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center py-4 position-relative overflow-hidden">
+                    <div class="position-absolute" style="top: -15px; right: -15px; opacity: 0.05;">
+                        <i class="fas fa-heart fa-5x"></i>
+                    </div>
+                    <div class="card-body">
+                        <div class="rounded-circle bg-info mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-heart text-white fa-2x"></i>
+                        </div>
+                        <h3 class="display-4 fw-bold text-info mb-0">{{ adozioni_in_corso }}</h3>
+                        <p class="text-muted">Adozioni in corso</p>
+                        <div class="progress mt-3" style="height: 5px;">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <h3 class="card-title text-success">{{ adozioni_completate }}</h3>
-                <p class="card-text">Adozioni completate</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <h3 class="card-title text-info">{{ adozioni_in_corso }}</h3>
-                <p class="card-text">Adozioni in corso</p>
-            </div>
-        </div>
+    <div class="position-absolute" style="bottom: -30px; left: -30px; opacity: 0.03; transform: rotate(-15deg);">
+        <i class="fas fa-bone fa-10x"></i>
     </div>
 </div>
 
 <!-- Processo di adozione -->
-<div class="row mt-5 bg-light py-5">
-    <div class="col-12 text-center">
-        <h2 class="mb-4">Come funziona l'adozione</h2>
-        <p class="lead mb-5">Seguire questi semplici passaggi per adottare un cane dal nostro sistema</p>
-    </div>
-
-    <div class="col-md-3 text-center mb-4">
-        <div class="bg-white rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-            <h3 class="m-0">1</h3>
+<div class="py-5 mt-5 position-relative">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold"><i class="fas fa-paw text-primary me-2"></i>Come adottare un amico</h2>
+            <p class="lead">Un percorso semplice per dare una nuova casa a chi ne ha bisogno</p>
         </div>
-        <h5 class="mt-3">Trova un cane</h5>
-        <p>Sfoglia tra quelli disponibili nel nostro database</p>
-    </div>
 
-    <div class="col-md-3 text-center mb-4">
-        <div class="bg-white rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-            <h3 class="m-0">2</h3>
-        </div>
-        <h5 class="mt-3">Invia una richiesta</h5>
-        <p>Compila il modulo online con i tuoi dati</p>
-    </div>
-
-    <div class="col-md-3 text-center mb-4">
-        <div class="bg-white rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-            <h3 class="m-0">3</h3>
-        </div>
-        <h5 class="mt-3">Colloquio e visita</h5>
-        <p>Partecipa a un colloquio e a una visita a casa</p>
-    </div>
-
-    <div class="col-md-3 text-center mb-4">
-        <div class="bg-white rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-            <h3 class="m-0">4</h3>
-        </div>
-        <h5 class="mt-3">Completa l'adozione</h5>
-        <p>Accogli il cane nella tua vita</p>
-    </div>
-
-    <div class="col-12 text-center mt-4">
-        <a href="{% url 'gestione_adozioni' %}" class="btn btn-primary">Traccia la tua richiesta di adozione</a>
-    </div>
-</div>
-
-<div class="row mt-5">
-    <div class="col-12">
-        <h2 class="text-center mb-4">I nostri cani in cerca di casa</h2>
-    </div>
-</div>
-
-<div class="row">
-    {% for cane in cani_disponibili %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            {% if cane.foto %}
-            <img src="{{ cane.foto.url }}" class="card-img-top" alt="{{ cane.nome }}">
-            {% else %}
-            <div class="bg-secondary text-white text-center p-5">
-                <i class="fas fa-dog fa-3x"></i>
-                <p class="mt-2">Nessuna foto disponibile</p>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 border-0 shadow-sm position-relative overflow-hidden">
+                    <div class="position-absolute" style="top: -15px; right: -15px; opacity: 0.05;">
+                        <i class="fas fa-search fa-5x"></i>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <div class="rounded-circle bg-primary mx-auto d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <span class="text-white fw-bold fs-2">1</span>
+                        </div>
+                        <h4 class="card-title mb-3">Trova un cane</h4>
+                        <p class="card-text">Sfoglia i profili dei nostri amici a quattro zampe in attesa di una famiglia.</p>
+                        <div class="mt-4">
+                            <a href="{% url 'cani_disponibili_foto' %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-search me-1"></i> Cerca ora
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-primary text-white text-center py-2">
+                        <small><i class="fas fa-info-circle me-1"></i> Puoi filtrare per età, taglia e caratteristiche</small>
+                    </div>
+                </div>
             </div>
-            {% endif %}
-            <div class="card-body">
-                <h5 class="card-title">{{ cane.nome }}</h5>
-                <p class="card-text">
-                    <strong>Razza:</strong> {{ cane.razza }}<br>
-                    <strong>Età:</strong> {% if cane.eta %}{{ cane.eta }} anni{% else %}Età sconosciuta{% endif %}<br>
-                    <strong>Sesso:</strong> {{ cane.get_sesso_display }}
-                </p>
-                <p class="card-text">{{ cane.descrizione|truncatewords:20 }}</p>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 border-0 shadow-sm position-relative overflow-hidden">
+                    <div class="position-absolute" style="top: -15px; right: -15px; opacity: 0.05;">
+                        <i class="fas fa-file-alt fa-5x"></i>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <div class="rounded-circle bg-success mx-auto d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <span class="text-white fw-bold fs-2">2</span>
+                        </div>
+                        <h4 class="card-title mb-3">Invia richiesta</h4>
+                        <p class="card-text">Compila il modulo di richiesta con i tuoi dati e informazioni sulla tua situazione.</p>
+                        <div class="mt-4">
+                            <a href="#" class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-file-alt me-1"></i> Modulo
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-success text-white text-center py-2">
+                        <small><i class="fas fa-info-circle me-1"></i> Processo semplice e veloce</small>
+                    </div>
+                </div>
             </div>
-            <div class="card-footer">
-                <a href="{% url 'dettaglio_cane' cane.id %}" class="btn btn-primary">Scopri di più</a>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 border-0 shadow-sm position-relative overflow-hidden">
+                    <div class="position-absolute" style="top: -15px; right: -15px; opacity: 0.05;">
+                        <i class="fas fa-comments fa-5x"></i>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <div class="rounded-circle bg-info mx-auto d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <span class="text-white fw-bold fs-2">3</span>
+                        </div>
+                        <h4 class="card-title mb-3">Colloquio</h4>
+                        <p class="card-text">Incontro conoscitivo e visita a casa per assicurare il benessere del cane.</p>
+                        <div class="mt-4">
+                            <a href="{% url 'contatti' %}" class="btn btn-sm btn-outline-info">
+                                <i class="fas fa-question-circle me-1"></i> Domande
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-info text-white text-center py-2">
+                        <small><i class="fas fa-info-circle me-1"></i> Ti aiuteremo in ogni fase</small>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    {% empty %}
-    <div class="col-12 text-center">
-        <p>Non ci sono cani disponibili per l'adozione al momento.</p>
-    </div>
-    {% endfor %}
-</div>
 
-<div class="row mt-5">
-    <div class="col-12 text-center">
-        <a href="{% url 'lista_cani' %}" class="btn btn-outline-primary">Vedi tutti i cani disponibili</a>
-    </div>
-</div>
-
-<div class="row mt-5">
-    <div class="col-12">
-        <h2 class="text-center mb-4">I nostri canili</h2>
-    </div>
-</div>
-
-<div class="row">
-    {% for canile in canili %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="card-title">{{ canile.nome }}</h5>
-                <p class="card-text">
-                    <strong>Indirizzo:</strong> {{ canile.indirizzo }}, {{ canile.citta }}<br>
-                    <strong>Telefono:</strong> {{ canile.telefono }}<br>
-                    <strong>Email:</strong> {{ canile.email }}
-                </p>
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 border-0 shadow-sm position-relative overflow-hidden">
+                    <div class="position-absolute" style="top: -15px; right: -15px; opacity: 0.05;">
+                        <i class="fas fa-home fa-5x"></i>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <div class="rounded-circle bg-warning mx-auto d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <span class="text-white fw-bold fs-2">4</span>
+                        </div>
+                        <h4 class="card-title mb-3">Benvenuto a casa</h4>
+                        <p class="card-text">Accogli il tuo nuovo amico nella famiglia e inizia una vita insieme.</p>
+                        <div class="mt-4">
+                            <a href="{% url 'gestione_adozioni' %}" class="btn btn-sm btn-outline-warning">
+                                <i class="fas fa-paw me-1"></i> Adozioni
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-warning text-white text-center py-2">
+                        <small><i class="fas fa-info-circle me-1"></i> Supporto post-adozione disponibile</small>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <div class="text-center mt-5">
+            <a href="{% url 'traccia_adozione' %}" class="btn btn-primary btn-lg px-4">
+                <i class="fas fa-clipboard-list me-2"></i>Traccia la tua richiesta di adozione
+            </a>
+        </div>
     </div>
-    {% empty %}
-    <div class="col-12 text-center">
-        <p>Non ci sono canili registrati al momento.</p>
+
+    <!-- Decorative elements -->
+    <div class="position-absolute" style="top: 50%; left: 0; transform: translateY(-50%); opacity: 0.03;">
+        <i class="fas fa-bone fa-8x"></i>
     </div>
-    {% endfor %}
+    <div class="position-absolute" style="top: 20%; right: 0; opacity: 0.03;">
+        <i class="fas fa-paw fa-8x"></i>
+    </div>
 </div>
+
+<div class="py-5 mt-5 bg-light rounded-3 position-relative overflow-hidden">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold"><i class="fas fa-heart text-danger me-2"></i>I nostri amici in cerca di casa</h2>
+            <p class="lead">Ogni cane ha una storia unica e merita una famiglia amorevole</p>
+        </div>
+
+        <div class="row g-4">
+            {% for cane in cani_disponibili %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden position-relative">
+                    <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
+                        <span class="badge bg-primary rounded-pill px-3 py-2 shadow-sm">
+                            <i class="fas fa-{% if cane.sesso == 'M' %}mars{% else %}venus{% endif %} me-1"></i>
+                            {{ cane.get_sesso_display }}
+                        </span>
+                    </div>
+                    {% if cane.foto %}
+                    <div style="height: 250px; overflow: hidden;">
+                        <img src="{{ cane.foto.url }}" class="card-img-top" alt="{{ cane.nome }}" style="object-fit: cover; height: 100%; width: 100%; transition: transform 0.5s ease;">
+                    </div>
+                    {% else %}
+                    <div class="bg-primary bg-opacity-10 text-center p-5" style="height: 250px;">
+                        <i class="fas fa-dog fa-5x text-primary opacity-50 mt-4"></i>
+                        <p class="mt-3 text-muted">Foto in arrivo</p>
+                    </div>
+                    {% endif %}
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h4 class="card-title mb-0 text-primary">{{ cane.nome }}</h4>
+                            <span class="badge bg-{% if cane.eta and cane.eta < 2 %}success{% elif cane.eta and cane.eta < 8 %}info{% else %}warning{% endif %} rounded-pill">
+                                {% if cane.eta %}{{ cane.eta }} anni{% else %}Età sconosciuta{% endif %}
+                            </span>
+                        </div>
+                        <p class="text-muted mb-3">{{ cane.razza }}</p>
+
+                        <div class="d-flex flex-wrap gap-1 mb-3">
+                            {% if cane.taglia %}
+                            <span class="badge bg-secondary rounded-pill">{{ cane.get_taglia_display }}</span>
+                            {% endif %}
+                            {% if cane.compatibile_bambini %}
+                            <span class="badge bg-success rounded-pill"><i class="fas fa-child me-1"></i> Ama i bambini</span>
+                            {% endif %}
+                            {% if cane.compatibile_animali %}
+                            <span class="badge bg-success rounded-pill"><i class="fas fa-paw me-1"></i> Va d'accordo con altri animali</span>
+                            {% endif %}
+                        </div>
+
+                        <p class="card-text">{{ cane.descrizione|truncatewords:15 }}</p>
+                    </div>
+                    <div class="card-footer bg-white border-0 p-4 pt-0">
+                        <div class="d-grid">
+                            <a href="{% url 'dettaglio_cane' cane.id %}" class="btn btn-outline-primary">
+                                <i class="fas fa-paw me-2"></i>Scopri di più su {{ cane.nome }}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="position-absolute" style="bottom: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));"></div>
+                </div>
+            </div>
+            {% empty %}
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{% url 'cani_disponibili_foto' %}" class="btn btn-primary btn-lg px-4">
+                <i class="fas fa-search me-2"></i>Vedi tutti i cani disponibili
+            </a>
+            <p class="text-muted mt-3">Abbiamo {{ total_cani_disponibili }} cani in attesa di una famiglia amorevole</p>
+        </div>
+    </div>
+
+    <div class="position-absolute" style="bottom: -20px; right: -20px; opacity: 0.03; transform: rotate(15deg);">
+        <i class="fas fa-bone fa-10x"></i>
+    </div>
+</div>
+
 
 <!-- Contatti e Link Utili -->
 <div class="row mt-5 bg-light py-5">
@@ -188,7 +328,7 @@
                 <h5 class="card-title">Link Utili</h5>
                 <ul class="list-unstyled">
                     <li class="mb-2"><a href="{% url 'home' %}" class="text-decoration-none">Homepage</a></li>
-                    <li class="mb-2"><a href="{% url 'lista_cani' %}" class="text-decoration-none">Elenco cani disponibili</a></li>
+                    <li class="mb-2"><a href="{% url 'cani_disponibili_foto' %}" class="text-decoration-none">Elenco cani disponibili</a></li>
                     <li class="mb-2"><a href="{% url 'gestione_adozioni' %}" class="text-decoration-none">Tracciamento adozioni</a></li>
                     <li class="mb-2"><a href="{% url 'chi_siamo' %}" class="text-decoration-none">Chi siamo</a></li>
                     <li class="mb-2"><a href="{% url 'contatti' %}" class="text-decoration-none">Contatti</a></li>

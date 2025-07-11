@@ -6,43 +6,232 @@
     <title>{% block title %}Gestione Canile{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #f39c12;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --danger-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f1c40f;
+            --info-color: #3498db;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            color: #333;
+            background-color: #f8f9fa;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233498db' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 0.8rem 1rem;
+        }
+
+        .navbar-brand {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .navbar-brand i {
+            margin-right: 8px;
+            color: var(--accent-color);
+        }
+
+        .nav-link {
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            margin: 0 3px;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+            box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+            border-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(46, 204, 113, 0.3);
+        }
+
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            font-weight: 600;
+            border-bottom: none;
+        }
+
+        footer {
+            background: linear-gradient(135deg, var(--dark-color), #1a252f);
+            color: white;
+            padding: 3rem 0;
+            margin-top: 3rem;
+        }
+
+        footer h5 {
+            color: var(--accent-color);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .paw-print {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .paw-print::before,
+        .paw-print::after {
+            content: '';
+            position: absolute;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            width: 10px;
+            height: 10px;
+        }
+
+        .paw-print::before {
+            top: -5px;
+            left: 2px;
+        }
+
+        .paw-print::after {
+            top: -5px;
+            right: 2px;
+        }
+
+        .jumbotron {
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8)), url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            border-radius: 15px;
+            padding: 3rem !important;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .badge {
+            padding: 0.5em 0.8em;
+            font-weight: 600;
+            border-radius: 5px;
+        }
+
+        .page-link {
+            color: var(--primary-color);
+            border-radius: 5px;
+            margin: 0 2px;
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+    </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">Gestione Canile</a>
+            <a class="navbar-brand" href="{% url 'home' %}"><i class="fas fa-paw"></i> Amici a 4 Zampe</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                        <a class="nav-link" href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'lista_cani' %}">Adotta un cane</a>
+                        <a class="nav-link" href="{% url 'cani_disponibili_foto' %}"><i class="fas fa-heart"></i> Adotta un cane</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'chi_siamo' %}">Chi siamo</a>
+                        <a class="nav-link" href="{% url 'traccia_adozione' %}"><i class="fas fa-search"></i> Traccia adozione</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'contatti' %}">Contatti</a>
+                        <a class="nav-link" href="{% url 'chi_siamo' %}"><i class="fas fa-users"></i> Chi siamo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contatti' %}"><i class="fas fa-envelope"></i> Contatti</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                        <a class="nav-link" href="{% url 'dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        <a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}"><i class="fas fa-user-plus"></i> Registrati</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -68,21 +257,45 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
+    <footer class="py-5">
         <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>Gestione Canile</h5>
-                    <p>Un progetto per aiutare i nostri amici a quattro zampe a trovare una casa.</p>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-paw me-2"></i> Amici a 4 Zampe</h5>
+                    <p class="mt-3">Un progetto dedicato ad aiutare i nostri amici a quattro zampe a trovare una famiglia amorevole che li accolga per sempre.</p>
+                    <div class="d-flex mt-4">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-youtube fa-lg"></i></a>
+                    </div>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <h5>Contatti</h5>
-                    <p>Email: info@gestionecanile.it<br>Tel: +39 123 456 7890</p>
+                <div class="col-md-4">
+                    <h5><i class="fas fa-map-marker-alt me-2"></i> Dove Siamo</h5>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2"><i class="fas fa-home me-2"></i> Via dei Canili 123, 00100 Roma</li>
+                        <li class="mb-2"><i class="fas fa-phone me-2"></i> +39 123 456 7890</li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@amicia4zampe.it</li>
+                        <li><i class="fas fa-clock me-2"></i> Lun-Ven: 9:00-18:00, Sab-Dom: 10:00-16:00</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5><i class="fas fa-link me-2"></i> Link Utili</h5>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2"><a href="{% url 'home' %}" class="text-white text-decoration-none"><i class="fas fa-angle-right me-2"></i>Home</a></li>
+                        <li class="mb-2"><a href="{% url 'cani_disponibili_foto' %}" class="text-white text-decoration-none"><i class="fas fa-angle-right me-2"></i>Adotta un cane</a></li>
+                        <li class="mb-2"><a href="{% url 'chi_siamo' %}" class="text-white text-decoration-none"><i class="fas fa-angle-right me-2"></i>Chi siamo</a></li>
+                        <li class="mb-2"><a href="{% url 'contatti' %}" class="text-white text-decoration-none"><i class="fas fa-angle-right me-2"></i>Contatti</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="row mt-3">
-                <div class="col-12 text-center">
-                    <p class="mb-0">&copy; {% now "Y" %} Gestione Canile. Tutti i diritti riservati.</p>
+            <hr class="mt-4 mb-4" style="border-color: rgba(255,255,255,0.1);">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-md-0"><i class="fas fa-paw me-2"></i> &copy; {% now "Y" %} Amici a 4 Zampe. Tutti i diritti riservati.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">Con <i class="fas fa-heart text-danger"></i> per tutti i nostri amici pelosi</p>
                 </div>
             </div>
         </div>

@@ -91,12 +91,35 @@ class Adozione(models.Model):
         ('rifiutata', 'Rifiutata'),
     ]
 
+    TIPO_ABITAZIONE_CHOICES = [
+        ('appartamento', 'Appartamento'),
+        ('casa_giardino', 'Casa con giardino'),
+        ('casa_rurale', 'Casa rurale/fattoria'),
+        ('altro', 'Altro'),
+    ]
+
+    ESPERIENZA_CHOICES = [
+        ('nessuna', 'Nessuna esperienza precedente'),
+        ('poca', 'Poca esperienza'),
+        ('media', 'Media esperienza'),
+        ('molta', 'Molta esperienza'),
+    ]
+
+    codice_tracciamento = models.CharField(max_length=10, unique=True, blank=True, null=True, help_text="Codice univoco per tracciare la richiesta di adozione")
     cane = models.ForeignKey(Cane, on_delete=models.CASCADE, related_name='adozioni')
     adottante_nome = models.CharField(max_length=100)
     adottante_cognome = models.CharField(max_length=100)
     adottante_email = models.EmailField()
     adottante_telefono = models.CharField(max_length=20)
     adottante_indirizzo = models.CharField(max_length=200)
+    tipo_abitazione = models.CharField(max_length=20, choices=TIPO_ABITAZIONE_CHOICES, default='appartamento')
+    esperienza_animali = models.CharField(max_length=20, choices=ESPERIENZA_CHOICES, default='nessuna')
+    presenza_bambini = models.BooleanField(default=False)
+    presenza_altri_animali = models.BooleanField(default=False)
+    descrizione_altri_animali = models.TextField(blank=True)
+    ricevi_aggiornamenti_email = models.BooleanField(default=False)
+    ricevi_aggiornamenti_sms = models.BooleanField(default=False)
+    accetta_termini = models.BooleanField(default=False)
     data_richiesta = models.DateField(default=timezone.now)
     data_adozione = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='richiesta')
